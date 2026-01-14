@@ -109,5 +109,23 @@ def init_db():
         return False
 
 
+def cleanup_all():
+    """Clean up all data from database tables (except stats) and return True if successful."""
+    if SessionLocal is None:
+        return False
+    
+    try:
+        db = SessionLocal()
+        db.query(VideoModel).delete()
+        db.query(JobModel).delete()
+        db.query(TikTokDownloadModel).delete()
+        db.commit()
+        db.close()
+        return True
+    except Exception as e:
+        print(f"Error cleaning up database: {e}")
+        return False
+
+
 if __name__ == "__main__":
     init_db()

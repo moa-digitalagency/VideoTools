@@ -5,17 +5,32 @@ let mergeQueue = [];
 let jobs = [];
 let tiktokDownloads = [];
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     initTheme();
     initNavigation();
     initUpload();
     initSplit();
     initMerge();
     initTikTok();
+    
+    await cleanupOnLoad();
+    
     loadVideos();
     loadStats();
     pollJobs();
 });
+
+async function cleanupOnLoad() {
+    try {
+        await fetch(`${API_BASE}/cleanup`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        console.log('Cleanup completed on page load');
+    } catch (err) {
+        console.error('Cleanup error:', err);
+    }
+}
 
 function initTheme() {
     const themeToggle = document.getElementById('theme-toggle');
@@ -262,8 +277,12 @@ function updateSplitPreview() {
 
 async function splitVideo(videoId, segmentDuration) {
     const btnSplit = document.getElementById('btn-split');
+    const originalContent = btnSplit.innerHTML;
     btnSplit.disabled = true;
-    btnSplit.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="w-5 h-5 spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Traitement...</span>';
+    btnSplit.innerHTML = `<span class="flex items-center justify-center gap-2">
+        <div class="w-6 h-6"><dotlottie-player src="https://lottie.host/fe611542-3d6e-4a7a-939b-f057ee86c662/mHagjNySSC.lottie" background="transparent" speed="1" style="width:24px;height:24px" loop autoplay></dotlottie-player></div>
+        Traitement...
+    </span>`;
     
     try {
         const res = await fetch(`${API_BASE}/videos/split`, {
@@ -282,7 +301,7 @@ async function splitVideo(videoId, segmentDuration) {
         alert('Erreur lors de la découpe');
     } finally {
         btnSplit.disabled = false;
-        btnSplit.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121"/></svg>Découper la Vidéo</span>';
+        btnSplit.innerHTML = originalContent;
     }
 }
 
@@ -380,8 +399,12 @@ async function mergeVideos() {
     if (mergeQueue.length < 2) return;
     
     const btnMerge = document.getElementById('btn-merge');
+    const originalContent = btnMerge.innerHTML;
     btnMerge.disabled = true;
-    btnMerge.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="w-5 h-5 spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Fusion...</span>';
+    btnMerge.innerHTML = `<span class="flex items-center justify-center gap-2">
+        <div class="w-6 h-6"><dotlottie-player src="https://lottie.host/fe611542-3d6e-4a7a-939b-f057ee86c662/mHagjNySSC.lottie" background="transparent" speed="1" style="width:24px;height:24px" loop autoplay></dotlottie-player></div>
+        Fusion...
+    </span>`;
     
     try {
         const res = await fetch(`${API_BASE}/videos/merge`, {
@@ -402,7 +425,7 @@ async function mergeVideos() {
         alert('Erreur lors de la fusion');
     } finally {
         btnMerge.disabled = mergeQueue.length < 2;
-        btnMerge.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>Fusionner les Vidéos</span>';
+        btnMerge.innerHTML = originalContent;
     }
 }
 
@@ -431,8 +454,13 @@ async function downloadTikTok(url) {
     const btnDownload = document.getElementById('btn-tiktok-download');
     const loadingDiv = document.getElementById('tiktok-loading');
     const urlInput = document.getElementById('tiktok-url');
+    const originalContent = btnDownload.innerHTML;
     
     btnDownload.disabled = true;
+    btnDownload.innerHTML = `<span class="flex items-center justify-center gap-2">
+        <div class="w-6 h-6"><dotlottie-player src="https://lottie.host/fe611542-3d6e-4a7a-939b-f057ee86c662/mHagjNySSC.lottie" background="transparent" speed="1" style="width:24px;height:24px" loop autoplay></dotlottie-player></div>
+        Téléchargement...
+    </span>`;
     loadingDiv.classList.remove('hidden');
     
     try {
@@ -456,6 +484,7 @@ async function downloadTikTok(url) {
         alert('Erreur lors du téléchargement');
     } finally {
         btnDownload.disabled = false;
+        btnDownload.innerHTML = originalContent;
         loadingDiv.classList.add('hidden');
     }
 }

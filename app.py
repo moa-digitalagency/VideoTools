@@ -3,7 +3,7 @@ from flask import Flask, send_from_directory
 from flask_cors import CORS
 
 from config import TEMPLATES_DIR
-from routes import videos_bp, jobs_bp, stats_bp, tiktok_bp
+from routes import videos_bp, jobs_bp, stats_bp, tiktok_bp, cleanup_bp
 
 
 def create_app():
@@ -21,6 +21,7 @@ def create_app():
     app.register_blueprint(jobs_bp)
     app.register_blueprint(stats_bp)
     app.register_blueprint(tiktok_bp)
+    app.register_blueprint(cleanup_bp)
     
     @app.route("/")
     def serve_index():

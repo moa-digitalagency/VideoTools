@@ -3,12 +3,14 @@ const API_BASE = '/api';
 let videos = [];
 let mergeQueue = [];
 let jobs = [];
+let tiktokDownloads = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initUpload();
     initSplit();
     initMerge();
+    initTikTok();
     loadVideos();
     loadStats();
     pollJobs();
@@ -370,6 +372,97 @@ async function mergeVideos() {
     }
 }
 
+function initTikTok() {
+    const urlInput = document.getElementById('tiktok-url');
+    const btnDownload = document.getElementById('btn-tiktok-download');
+    
+    btnDownload.addEventListener('click', () => {
+        const url = urlInput.value.trim();
+        if (url) {
+            downloadTikTok(url);
+        }
+    });
+    
+    urlInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const url = urlInput.value.trim();
+            if (url) {
+                downloadTikTok(url);
+            }
+        }
+    });
+}
+
+async function downloadTikTok(url) {
+    const btnDownload = document.getElementById('btn-tiktok-download');
+    const loadingDiv = document.getElementById('tiktok-loading');
+    const urlInput = document.getElementById('tiktok-url');
+    
+    btnDownload.disabled = true;
+    loadingDiv.classList.remove('hidden');
+    
+    try {
+        const res = await fetch(`${API_BASE}/tiktok/download`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url })
+        });
+        
+        const data = await res.json();
+        
+        if (data.error) {
+            alert(data.error);
+        } else {
+            tiktokDownloads.unshift(data);
+            renderTikTokDownloads();
+            urlInput.value = '';
+        }
+    } catch (err) {
+        console.error('TikTok download error:', err);
+        alert('Erreur lors du téléchargement');
+    } finally {
+        btnDownload.disabled = false;
+        loadingDiv.classList.add('hidden');
+    }
+}
+
+function renderTikTokDownloads() {
+    const container = document.getElementById('tiktok-downloads-container');
+    
+    if (tiktokDownloads.length === 0) {
+        container.innerHTML = `
+            <div class="text-center text-indigo-400 py-8">
+                <p>Aucune vidéo téléchargée</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = tiktokDownloads.map(v => `
+        <div class="video-card" data-testid="tiktok-card-${v.id}">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-pink-600/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 text-pink-400" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                    </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-medium truncate">${v.title || 'TikTok Video'}</p>
+                    <div class="flex items-center gap-3 text-xs text-indigo-300">
+                        <span>@${v.uploader || 'unknown'}</span>
+                        ${v.duration ? `<span>${formatDuration(v.duration)}</span>` : ''}
+                    </div>
+                </div>
+                <a href="${API_BASE}/download/${v.filename}" class="bg-tiktok/20 text-tiktok p-2 rounded-lg hover:bg-tiktok/30 transition-colors" data-testid="download-tiktok-${v.id}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    `).join('');
+}
+
 async function pollJobs() {
     try {
         const res = await fetch(`${API_BASE}/jobs`);
@@ -480,18 +573,18 @@ async function loadStats() {
 
 function renderAchievements(stats) {
     const achievements = [
-        { id: 'first-split', name: 'Premier Découpage', desc: 'Découpez votre première vidéo', icon: '✂️', unlocked: stats.totalVideosSplit >= 1 },
-        { id: 'first-merge', name: 'Première Fusion', desc: 'Fusionnez des vidéos pour la première fois', icon: '🔗', unlocked: stats.totalVideosMerged >= 1 },
-        { id: 'segment-master', name: 'Maître des Segments', desc: 'Créez 10 segments', icon: '🎯', unlocked: stats.totalSegmentsCreated >= 10 },
-        { id: 'video-pro', name: 'Video Pro', desc: 'Traitez 5 vidéos', icon: '🎬', unlocked: (stats.totalVideosSplit + stats.totalVideosMerged) >= 5 },
-        { id: 'time-saver', name: 'Gain de Temps', desc: 'Traitez 10 minutes de vidéo', icon: '⏱️', unlocked: stats.totalTimeSaved >= 600 }
+        { id: 'first-split', name: 'Premier Découpage', desc: 'Découpez votre première vidéo', icon: '1', unlocked: stats.totalVideosSplit >= 1 },
+        { id: 'first-merge', name: 'Première Fusion', desc: 'Fusionnez des vidéos pour la première fois', icon: '2', unlocked: stats.totalVideosMerged >= 1 },
+        { id: 'segment-master', name: 'Maître des Segments', desc: 'Créez 10 segments', icon: '3', unlocked: stats.totalSegmentsCreated >= 10 },
+        { id: 'video-pro', name: 'Video Pro', desc: 'Traitez 5 vidéos', icon: '4', unlocked: (stats.totalVideosSplit + stats.totalVideosMerged) >= 5 },
+        { id: 'time-saver', name: 'Gain de Temps', desc: 'Traitez 10 minutes de vidéo', icon: '5', unlocked: stats.totalTimeSaved >= 600 }
     ];
     
     const container = document.getElementById('achievements');
     container.innerHTML = achievements.map(a => `
         <div class="achievement-card ${a.unlocked ? 'unlocked' : ''}" data-testid="achievement-${a.id}">
             <div class="achievement-icon ${a.unlocked ? 'bg-accent/30' : 'bg-indigo-800/50'}">
-                ${a.unlocked ? a.icon : '🔒'}
+                ${a.unlocked ? a.icon : '?'}
             </div>
             <div class="flex-1">
                 <p class="font-medium ${a.unlocked ? 'text-accent' : 'text-indigo-400'}">${a.name}</p>

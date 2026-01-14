@@ -2,7 +2,7 @@
 
 ## Overview
 
-VideoSplit is a mobile-first web application for splitting and merging video files. Users can upload videos, split them into segments of configurable duration (exactly N seconds each), or merge multiple videos into one seamless file. The app features a gamification layer with achievements and statistics tracking.
+VideoSplit is a mobile-first web application for splitting and merging video files. Users can upload videos, split them into segments of configurable duration (exactly N seconds each), merge multiple videos into one seamless file, and download TikTok videos. The app features a gamification layer with achievements and statistics tracking.
 
 ## Architecture
 
@@ -18,7 +18,7 @@ VideoSplit is a mobile-first web application for splitting and merging video fil
 - `main.py` - Entry point
 - `models/` - Data models (Video, Job, Stats)
 - `routes/` - API route handlers
-- `services/` - Business logic (VideoService)
+- `services/` - Business logic (VideoService, TikTokService)
 - `utils/` - Utilities (FFmpeg, FileHandler)
 - `security/` - Validation and security
 
@@ -43,10 +43,12 @@ Preferred communication style: Simple, everyday language.
 │   ├── __init__.py
 │   ├── videos.py       # Video API routes
 │   ├── jobs.py         # Jobs API routes
-│   └── stats.py        # Stats API routes
+│   ├── stats.py        # Stats API routes
+│   └── tiktok.py       # TikTok download routes
 ├── services/
 │   ├── __init__.py
-│   └── video_service.py # Video processing logic
+│   ├── video_service.py # Video processing logic
+│   └── tiktok_service.py # TikTok download logic
 ├── utils/
 │   ├── __init__.py
 │   ├── ffmpeg.py       # FFmpeg helper
@@ -59,7 +61,7 @@ Preferred communication style: Simple, everyday language.
 │   ├── css/style.css   # Styles
 │   └── js/app.js       # JavaScript
 ├── uploads/            # Uploaded video files
-└── outputs/            # Split/merged video results
+└── outputs/            # Split/merged/downloaded video files
 ```
 
 ## API Endpoints
@@ -74,6 +76,7 @@ Preferred communication style: Simple, everyday language.
 - `GET /api/jobs` - List processing jobs
 - `GET /api/stats` - Get statistics
 - `GET /api/download/<filename>` - Download processed file
+- `POST /api/tiktok/download` - Download TikTok video by URL
 
 ## Video Processing
 
@@ -97,6 +100,12 @@ Preferred communication style: Simple, everyday language.
 4. Attempt lossless concat first
 5. Fall back to re-encoding if codecs differ
 
+### TikTok Download
+- Uses yt-dlp library to download TikTok videos
+- Supports all TikTok URL formats (tiktok.com, vm.tiktok.com, vt.tiktok.com)
+- Downloads best quality available
+- Extracts video metadata (title, uploader, duration, views, likes)
+
 ## External Dependencies
 
 ### Video Processing
@@ -107,7 +116,8 @@ Preferred communication style: Simple, everyday language.
 - `flask-cors` - CORS support
 - `python-dotenv` - Environment variables
 - `werkzeug` - File upload handling
+- `yt-dlp` - TikTok video downloader
 
 ## File Storage
 - `uploads/` - Uploaded video files (user uploads go here)
-- `outputs/` - Split/merged video results (processed files go here)
+- `outputs/` - Split/merged/downloaded video files (processed files go here)

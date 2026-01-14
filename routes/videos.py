@@ -1,7 +1,7 @@
-from flask import Blueprint, request, jsonify, send_file
+from flask import Blueprint, request, jsonify, send_file, after_this_request
 import os
 
-from services import VideoService
+from services.video_service import VideoService
 from config import OUTPUT_DIR
 
 videos_bp = Blueprint('videos', __name__)
@@ -28,7 +28,7 @@ def upload_video():
     if error or not video:
         return jsonify({"error": error or "Upload failed"}), 400
     
-    return jsonify(video.to_dict())
+    return jsonify(video)
 
 
 @videos_bp.route('/api/videos/<video_id>', methods=['DELETE'])
@@ -75,7 +75,7 @@ def split_video():
     if error or not job:
         return jsonify({"error": error or "Split failed"}), 400
     
-    return jsonify({"jobId": job.id, **job.to_dict()})
+    return jsonify({"jobId": job['id'], **job})
 
 
 @videos_bp.route('/api/videos/merge', methods=['POST'])
@@ -91,7 +91,7 @@ def merge_videos():
     if error or not job:
         return jsonify({"error": error or "Merge failed"}), 400
     
-    return jsonify({"jobId": job.id, **job.to_dict()})
+    return jsonify({"jobId": job['id'], **job})
 
 
 @videos_bp.route('/api/download/<filename>', methods=['GET'])
@@ -100,6 +100,12 @@ def download_output(filename):
     
     if not os.path.exists(file_path):
         return jsonify({"error": "File not found"}), 404
+    
+    @after_this_request
+    def cleanup(response):
+        if 'tiktok_' in filename:
+            VideoService.cleanup_file_after_download(file_path)
+        return response
     
     return send_file(
         file_path,

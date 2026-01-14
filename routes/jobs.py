@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 
-from services import VideoService
+from services.video_service import VideoService
 
 jobs_bp = Blueprint('jobs', __name__)
 

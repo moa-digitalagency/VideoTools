@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoSplit - Découpe & Fusion Vidéo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        accent: '#f59e0b',
+                        success: '#22c55e',
+                        dark: '#1e1b4b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-dark via-indigo-900 to-purple-900 min-h-screen text-white">
+    <div id="app" class="flex flex-col min-h-screen">
+        <header class="p-4 text-center">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                VideoSplit
+            </h1>
+            <p class="text-sm text-indigo-300 mt-1">Découpe & Fusion Vidéo</p>
+        </header>
+
+        <main class="flex-1 px-4 pb-24 overflow-y-auto">
+            <div id="page-upload" class="page active">
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 mb-4">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="font-semibold">Upload Vidéo</h2>
+                            <p class="text-xs text-indigo-300">Formats: MP4, MOV, AVI, MKV</p>
+                        </div>
+                    </div>
+                    
+                    <div id="upload-zone" class="border-2 border-dashed border-indigo-400/50 rounded-xl p-8 text-center cursor-pointer hover:border-primary hover:bg-white/5 transition-all" data-testid="upload-zone">
+                        <input type="file" id="video-input" accept="video/*" class="hidden" data-testid="input-video-file">
+                        <div class="space-y-2">
+                            <div class="w-16 h-16 mx-auto bg-indigo-500/20 rounded-full flex items-center justify-center">
+                                <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <p class="text-indigo-200">Glissez votre vidéo ici</p>
+                            <p class="text-xs text-indigo-400">ou cliquez pour sélectionner</p>
+                        </div>
+                    </div>
+                    
+                    <div id="upload-progress" class="hidden mt-4">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span id="upload-filename">video.mp4</span>
+                            <span id="upload-percent">0%</span>
+                        </div>
+                        <div class="h-2 bg-indigo-900 rounded-full overflow-hidden">
+                            <div id="upload-bar" class="h-full bg-gradient-to-r from-primary to-accent transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="videos-list" class="space-y-3">
+                    <h3 class="font-medium text-indigo-200 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                        Vidéos Uploadées
+                    </h3>
+                    <div id="videos-container"></div>
+                </div>
+            </div>
+
+            <div id="page-split" class="page hidden">
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 mb-4">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-accent rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="font-semibold">Découper Vidéo</h2>
+                            <p class="text-xs text-indigo-300">Segments de durée précise</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-indigo-200 mb-2">Sélectionner une vidéo</label>
+                            <select id="split-video-select" class="w-full bg-indigo-900/50 border border-indigo-500/30 rounded-xl px-4 py-3 focus:outline-none focus:border-primary" data-testid="select-split-video">
+                                <option value="">Choisir une vidéo...</option>
+                            </select>
+                        </div>
+
+                        <div id="split-video-info" class="hidden bg-indigo-900/30 rounded-xl p-4">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-indigo-300">Durée totale:</span>
+                                <span id="split-duration" class="font-mono">00:00</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-indigo-200 mb-2">Durée de chaque segment (secondes)</label>
+                            <div class="flex items-center gap-3">
+                                <input type="number" id="segment-duration" value="10" min="1" max="3600" class="flex-1 bg-indigo-900/50 border border-indigo-500/30 rounded-xl px-4 py-3 focus:outline-none focus:border-primary font-mono text-lg" data-testid="input-segment-duration">
+                                <span class="text-indigo-300">sec</span>
+                            </div>
+                        </div>
+
+                        <div id="split-preview" class="hidden bg-indigo-900/30 rounded-xl p-4">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-indigo-300">Segments à créer:</span>
+                                <span id="segment-count" class="font-bold text-accent">0</span>
+                            </div>
+                            <div class="flex flex-wrap gap-1" id="segment-preview-boxes"></div>
+                        </div>
+
+                        <button id="btn-split" class="w-full bg-gradient-to-r from-accent to-orange-500 text-white font-semibold py-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed" disabled data-testid="button-split">
+                            <span class="flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121"/>
+                                </svg>
+                                Découper la Vidéo
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="split-jobs" class="space-y-3"></div>
+            </div>
+
+            <div id="page-merge" class="page hidden">
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 mb-4">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-success rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="font-semibold">Fusionner Vidéos</h2>
+                            <p class="text-xs text-indigo-300">Combiner plusieurs vidéos</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div id="merge-upload-zone" class="border-2 border-dashed border-green-400/50 rounded-xl p-6 text-center cursor-pointer hover:border-success hover:bg-white/5 transition-all" data-testid="merge-upload-zone">
+                            <input type="file" id="merge-video-input" accept="video/*" multiple class="hidden" data-testid="input-merge-files">
+                            <div class="space-y-2">
+                                <div class="w-12 h-12 mx-auto bg-green-500/20 rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                    </svg>
+                                </div>
+                                <p class="text-green-200">Ajouter des vidéos à fusionner</p>
+                                <p class="text-xs text-green-400">Sélection multiple possible</p>
+                            </div>
+                        </div>
+
+                        <div id="merge-queue" class="space-y-2"></div>
+
+                        <div id="merge-info" class="hidden bg-indigo-900/30 rounded-xl p-4">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-indigo-300">Vidéos sélectionnées:</span>
+                                <span id="merge-count" class="font-bold text-success">0</span>
+                            </div>
+                            <div class="flex justify-between text-sm mt-1">
+                                <span class="text-indigo-300">Durée totale estimée:</span>
+                                <span id="merge-total-duration" class="font-mono">00:00</span>
+                            </div>
+                        </div>
+
+                        <button id="btn-merge" class="w-full bg-gradient-to-r from-success to-emerald-500 text-white font-semibold py-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed" disabled data-testid="button-merge">
+                            <span class="flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                                </svg>
+                                Fusionner les Vidéos
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="merge-jobs" class="space-y-3"></div>
+            </div>
+
+            <div id="page-stats" class="page hidden">
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 mb-4">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="font-semibold">Statistiques</h2>
+                            <p class="text-xs text-indigo-300">Vos accomplissements</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-indigo-900/30 rounded-xl p-4 text-center">
+                            <div class="text-3xl font-bold text-primary" id="stat-split">0</div>
+                            <div class="text-xs text-indigo-300 mt-1">Vidéos Découpées</div>
+                        </div>
+                        <div class="bg-indigo-900/30 rounded-xl p-4 text-center">
+                            <div class="text-3xl font-bold text-accent" id="stat-segments">0</div>
+                            <div class="text-xs text-indigo-300 mt-1">Segments Créés</div>
+                        </div>
+                        <div class="bg-indigo-900/30 rounded-xl p-4 text-center">
+                            <div class="text-3xl font-bold text-success" id="stat-merged">0</div>
+                            <div class="text-xs text-indigo-300 mt-1">Vidéos Fusionnées</div>
+                        </div>
+                        <div class="bg-indigo-900/30 rounded-xl p-4 text-center">
+                            <div class="text-3xl font-bold text-purple-400" id="stat-time">0</div>
+                            <div class="text-xs text-indigo-300 mt-1">Minutes Traitées</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6">
+                    <h3 class="font-semibold mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                        </svg>
+                        Achievements
+                    </h3>
+                    <div id="achievements" class="space-y-3"></div>
+                </div>
+            </div>
+        </main>
+
+        <nav class="fixed bottom-0 left-0 right-0 bg-indigo-950/90 backdrop-blur-lg border-t border-indigo-800/50 px-4 py-2 safe-area-bottom">
+            <div class="flex justify-around max-w-md mx-auto">
+                <button class="nav-btn active flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all" data-page="upload" data-testid="nav-upload">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                    <span class="text-xs">Upload</span>
+                </button>
+                <button class="nav-btn flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all" data-page="split" data-testid="nav-split">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121"/>
+                    </svg>
+                    <span class="text-xs">Découper</span>
+                </button>
+                <button class="nav-btn flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all" data-page="merge" data-testid="nav-merge">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                    </svg>
+                    <span class="text-xs">Fusionner</span>
+                </button>
+                <button class="nav-btn flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all" data-page="stats" data-testid="nav-stats">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    <span class="text-xs">Stats</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -2,13 +2,20 @@ import os
 import uuid
 import subprocess
 import json
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from threading import Thread
 
-app = Flask(__name__)
+STATIC_DIR = os.path.join(os.getcwd(), "static")
+
+app = Flask(__name__, static_folder=STATIC_DIR, static_url_path='/static')
 CORS(app)
+
+
+@app.route("/")
+def serve_index():
+    return send_from_directory(STATIC_DIR, "index.html")
 
 UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
 OUTPUT_DIR = os.path.join(os.getcwd(), "outputs")
@@ -331,4 +338,5 @@ def process_merge_job(job_id, video_list):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001, debug=False, use_reloader=False)
+    port = int(os.environ.get("FLASK_PORT", 5001))
+    app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)

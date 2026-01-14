@@ -2,9 +2,22 @@
 
 ## Overview
 
-VideoSplit is a mobile-first web application for splitting and merging video files. Users can upload videos, split them into segments of configurable duration, or merge multiple videos into one. The app features a gamification layer with achievements and statistics tracking to enhance user engagement.
+VideoSplit is a mobile-first web application for splitting and merging video files. Users can upload videos, split them into segments of configurable duration (exactly N seconds each), or merge multiple videos into one seamless file. The app features a gamification layer with achievements and statistics tracking.
 
-The application follows a monorepo structure with a React frontend and Express backend, using FFmpeg for video processing operations.
+## Architecture
+
+**Frontend**: Pure HTML/CSS/Tailwind/JavaScript (NO React, NO TypeScript)
+- Located in `static/` directory
+- `static/index.html` - Main HTML page with all UI
+- `static/css/style.css` - Custom CSS styles
+- `static/js/app.js` - All JavaScript logic
+
+**Backend**: Python Flask with FFmpeg
+- Located in `server/app.py`
+- Handles video upload, split, merge operations
+- Serves static files directly
+
+**Note**: Express (`server/routes.ts`) acts as a launcher/proxy due to workflow constraints, but all actual logic is in Flask.
 
 ## User Preferences
 
@@ -12,58 +25,45 @@ Preferred communication style: Simple, everyday language.
 
 ## System Architecture
 
-### Frontend Architecture
-- **Framework**: React 18 with TypeScript
-- **Routing**: Wouter (lightweight React router)
-- **State Management**: TanStack React Query for server state
-- **UI Components**: shadcn/ui component library built on Radix UI primitives
-- **Styling**: Tailwind CSS with CSS variables for theming (light/dark mode support)
-- **Build Tool**: Vite with hot module replacement
+### Frontend (Pure HTML/CSS/JS)
+- **No frameworks** - Vanilla JavaScript only
+- **Tailwind CSS** via CDN for styling
+- **Mobile-first** design with bottom navigation
+- **Gamification** - Achievements and statistics tracking
 
-**Design Philosophy**: Mobile-first approach with touch-optimized UI (44px minimum tap targets), bottom navigation bar, and gamification elements inspired by Duolingo's achievement system.
+**Key Files**:
+- `static/index.html` - Single page application
+- `static/css/style.css` - Custom styles
+- `static/js/app.js` - All JavaScript logic
 
-### Backend Architecture
-- **Framework**: Express.js with TypeScript
-- **Video Processing**: FFmpeg via fluent-ffmpeg library
-- **File Uploads**: Multer middleware with disk storage
-- **Storage**: In-memory storage for video metadata and job tracking (MemStorage class)
-- **API Design**: RESTful endpoints under `/api/` prefix
+### Backend (Python Flask)
+- **Framework**: Flask with CORS support
+- **Video Processing**: FFmpeg via subprocess
+- **File Uploads**: Werkzeug secure file handling
+- **Storage**: In-memory dictionaries for metadata/jobs
 
 **Key Endpoints**:
 - `POST /api/videos/upload` - Upload video files
-- `POST /api/videos/split` - Split video into segments
+- `POST /api/videos/split` - Split video into exact segments
 - `POST /api/videos/merge` - Merge multiple videos
 - `GET /api/videos` - List uploaded videos
 - `GET /api/jobs` - Track processing jobs
 - `GET /api/stats` - User statistics
+- `GET /api/download/<filename>` - Download processed files
 
-### Data Storage
-- **Current**: In-memory storage using Map structures (non-persistent)
-- **Database Ready**: Drizzle ORM configured with PostgreSQL dialect
-- **Schema**: Zod schemas defined in `shared/schema.ts` for validation
-- **File Storage**: Local filesystem (`uploads/` and `outputs/` directories)
-
-### Build System
-- **Development**: Vite dev server with Express API proxy
-- **Production**: esbuild bundles server code, Vite builds client assets
-- **Output**: Single `dist/` directory with `index.cjs` (server) and `public/` (static assets)
+### File Storage
+- `uploads/` - Uploaded video files
+- `outputs/` - Processed video segments and merged files
 
 ## External Dependencies
 
 ### Video Processing
-- **FFmpeg**: System-level dependency required for video splitting and merging operations. Uses `fluent-ffmpeg` Node.js wrapper.
+- **FFmpeg**: System-level dependency for video splitting and merging (installed via Nix)
 
-### Database (Configured but Optional)
-- **PostgreSQL**: Drizzle ORM configuration present for future database integration
-- **Environment Variable**: `DATABASE_URL` required when database features are enabled
+### Python Dependencies
+- `flask` - Web framework
+- `flask-cors` - CORS support
+- `werkzeug` - File upload handling
 
 ### Third-Party Services
-- None currently integrated. The application operates entirely locally.
-
-### Key NPM Dependencies
-- `@tanstack/react-query` - Server state management
-- `fluent-ffmpeg` - FFmpeg Node.js bindings
-- `multer` - File upload handling
-- `drizzle-orm` / `drizzle-zod` - Database ORM (prepared for use)
-- `wouter` - Client-side routing
-- Radix UI primitives - Accessible UI components
+- None - The application operates entirely locally

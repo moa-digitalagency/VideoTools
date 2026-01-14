@@ -1,0 +1,515 @@
+const API_BASE = '/api';
+
+let videos = [];
+let mergeQueue = [];
+let jobs = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+    initNavigation();
+    initUpload();
+    initSplit();
+    initMerge();
+    loadVideos();
+    loadStats();
+    pollJobs();
+});
+
+function initNavigation() {
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const page = btn.dataset.page;
+            showPage(page);
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+}
+
+function showPage(pageName) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(`page-${pageName}`).classList.add('active');
+    
+    if (pageName === 'split') updateSplitVideoSelect();
+    if (pageName === 'stats') loadStats();
+}
+
+function initUpload() {
+    const zone = document.getElementById('upload-zone');
+    const input = document.getElementById('video-input');
+    
+    zone.addEventListener('click', () => input.click());
+    
+    zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        zone.classList.add('border-primary', 'bg-white/10');
+    });
+    
+    zone.addEventListener('dragleave', () => {
+        zone.classList.remove('border-primary', 'bg-white/10');
+    });
+    
+    zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('border-primary', 'bg-white/10');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) uploadVideo(files[0]);
+    });
+    
+    input.addEventListener('change', () => {
+        if (input.files.length > 0) uploadVideo(input.files[0]);
+    });
+}
+
+async function uploadVideo(file) {
+    const progressDiv = document.getElementById('upload-progress');
+    const filenameEl = document.getElementById('upload-filename');
+    const percentEl = document.getElementById('upload-percent');
+    const barEl = document.getElementById('upload-bar');
+    
+    progressDiv.classList.remove('hidden');
+    filenameEl.textContent = file.name;
+    
+    const formData = new FormData();
+    formData.append('video', file);
+    
+    try {
+        const xhr = new XMLHttpRequest();
+        
+        xhr.upload.addEventListener('progress', (e) => {
+            if (e.lengthComputable) {
+                const percent = Math.round((e.loaded / e.total) * 100);
+                percentEl.textContent = percent + '%';
+                barEl.style.width = percent + '%';
+            }
+        });
+        
+        xhr.addEventListener('load', () => {
+            if (xhr.status === 200) {
+                setTimeout(() => {
+                    progressDiv.classList.add('hidden');
+                    barEl.style.width = '0%';
+                    loadVideos();
+                }, 500);
+            } else {
+                alert('Erreur lors de l\'upload');
+                progressDiv.classList.add('hidden');
+            }
+        });
+        
+        xhr.addEventListener('error', () => {
+            alert('Erreur réseau');
+            progressDiv.classList.add('hidden');
+        });
+        
+        xhr.open('POST', `${API_BASE}/videos/upload`);
+        xhr.send(formData);
+    } catch (err) {
+        console.error('Upload error:', err);
+        alert('Erreur lors de l\'upload');
+        progressDiv.classList.add('hidden');
+    }
+}
+
+async function loadVideos() {
+    try {
+        const res = await fetch(`${API_BASE}/videos`);
+        videos = await res.json();
+        renderVideos();
+        updateSplitVideoSelect();
+    } catch (err) {
+        console.error('Error loading videos:', err);
+    }
+}
+
+function renderVideos() {
+    const container = document.getElementById('videos-container');
+    
+    if (videos.length === 0) {
+        container.innerHTML = `
+            <div class="text-center text-indigo-400 py-8">
+                <p>Aucune vidéo uploadée</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = videos.map(v => `
+        <div class="video-card" data-testid="video-card-${v.id}">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-indigo-600/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-medium truncate">${v.originalName}</p>
+                    <div class="flex items-center gap-3 text-xs text-indigo-300">
+                        <span>${formatDuration(v.duration)}</span>
+                        <span>${formatFileSize(v.size)}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function initSplit() {
+    const select = document.getElementById('split-video-select');
+    const durationInput = document.getElementById('segment-duration');
+    const btnSplit = document.getElementById('btn-split');
+    
+    select.addEventListener('change', updateSplitPreview);
+    durationInput.addEventListener('input', updateSplitPreview);
+    
+    btnSplit.addEventListener('click', () => {
+        const videoId = select.value;
+        const segmentDuration = parseInt(durationInput.value);
+        
+        if (videoId && segmentDuration > 0) {
+            splitVideo(videoId, segmentDuration);
+        }
+    });
+}
+
+function updateSplitVideoSelect() {
+    const select = document.getElementById('split-video-select');
+    const currentValue = select.value;
+    
+    select.innerHTML = '<option value="">Choisir une vidéo...</option>' + 
+        videos.map(v => `<option value="${v.id}">${v.originalName} (${formatDuration(v.duration)})</option>`).join('');
+    
+    if (currentValue && videos.find(v => v.id === currentValue)) {
+        select.value = currentValue;
+    }
+    
+    updateSplitPreview();
+}
+
+function updateSplitPreview() {
+    const select = document.getElementById('split-video-select');
+    const durationInput = document.getElementById('segment-duration');
+    const infoDiv = document.getElementById('split-video-info');
+    const previewDiv = document.getElementById('split-preview');
+    const btnSplit = document.getElementById('btn-split');
+    const durationEl = document.getElementById('split-duration');
+    const countEl = document.getElementById('segment-count');
+    const boxesEl = document.getElementById('segment-preview-boxes');
+    
+    const video = videos.find(v => v.id === select.value);
+    const segmentDuration = parseInt(durationInput.value) || 0;
+    
+    if (!video || segmentDuration <= 0) {
+        infoDiv.classList.add('hidden');
+        previewDiv.classList.add('hidden');
+        btnSplit.disabled = true;
+        return;
+    }
+    
+    infoDiv.classList.remove('hidden');
+    previewDiv.classList.remove('hidden');
+    btnSplit.disabled = false;
+    
+    durationEl.textContent = formatDuration(video.duration);
+    
+    const segmentCount = Math.ceil(video.duration / segmentDuration);
+    countEl.textContent = segmentCount;
+    
+    const boxes = [];
+    for (let i = 0; i < Math.min(segmentCount, 20); i++) {
+        boxes.push(`<div class="segment-box">${i + 1}</div>`);
+    }
+    if (segmentCount > 20) {
+        boxes.push(`<div class="segment-box">...</div>`);
+    }
+    boxesEl.innerHTML = boxes.join('');
+}
+
+async function splitVideo(videoId, segmentDuration) {
+    const btnSplit = document.getElementById('btn-split');
+    btnSplit.disabled = true;
+    btnSplit.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="w-5 h-5 spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Traitement...</span>';
+    
+    try {
+        const res = await fetch(`${API_BASE}/videos/split`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ videoId, segmentDuration })
+        });
+        
+        const data = await res.json();
+        
+        if (data.jobId) {
+            pollJobs();
+        }
+    } catch (err) {
+        console.error('Split error:', err);
+        alert('Erreur lors de la découpe');
+    } finally {
+        btnSplit.disabled = false;
+        btnSplit.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121"/></svg>Découper la Vidéo</span>';
+    }
+}
+
+function initMerge() {
+    const zone = document.getElementById('merge-upload-zone');
+    const input = document.getElementById('merge-video-input');
+    const btnMerge = document.getElementById('btn-merge');
+    
+    zone.addEventListener('click', () => input.click());
+    
+    zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        zone.classList.add('border-success', 'bg-white/10');
+    });
+    
+    zone.addEventListener('dragleave', () => {
+        zone.classList.remove('border-success', 'bg-white/10');
+    });
+    
+    zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('border-success', 'bg-white/10');
+        handleMergeFiles(e.dataTransfer.files);
+    });
+    
+    input.addEventListener('change', () => {
+        handleMergeFiles(input.files);
+    });
+    
+    btnMerge.addEventListener('click', mergeVideos);
+}
+
+async function handleMergeFiles(files) {
+    for (const file of files) {
+        const formData = new FormData();
+        formData.append('video', file);
+        
+        try {
+            const res = await fetch(`${API_BASE}/videos/upload`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const video = await res.json();
+            mergeQueue.push(video);
+            renderMergeQueue();
+        } catch (err) {
+            console.error('Error uploading for merge:', err);
+        }
+    }
+}
+
+function renderMergeQueue() {
+    const container = document.getElementById('merge-queue');
+    const infoDiv = document.getElementById('merge-info');
+    const countEl = document.getElementById('merge-count');
+    const durationEl = document.getElementById('merge-total-duration');
+    const btnMerge = document.getElementById('btn-merge');
+    
+    if (mergeQueue.length === 0) {
+        container.innerHTML = '';
+        infoDiv.classList.add('hidden');
+        btnMerge.disabled = true;
+        return;
+    }
+    
+    infoDiv.classList.remove('hidden');
+    btnMerge.disabled = mergeQueue.length < 2;
+    
+    countEl.textContent = mergeQueue.length;
+    const totalDuration = mergeQueue.reduce((sum, v) => sum + v.duration, 0);
+    durationEl.textContent = formatDuration(totalDuration);
+    
+    container.innerHTML = mergeQueue.map((v, i) => `
+        <div class="merge-item" data-testid="merge-item-${i}">
+            <div class="flex items-center gap-2 flex-1 min-w-0">
+                <span class="w-6 h-6 bg-success/20 rounded-full flex items-center justify-center text-xs font-bold">${i + 1}</span>
+                <span class="truncate text-sm">${v.originalName}</span>
+            </div>
+            <button onclick="removeMergeItem(${i})" class="text-red-400 hover:text-red-300 p-1" data-testid="button-remove-merge-${i}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    `).join('');
+}
+
+function removeMergeItem(index) {
+    mergeQueue.splice(index, 1);
+    renderMergeQueue();
+}
+
+async function mergeVideos() {
+    if (mergeQueue.length < 2) return;
+    
+    const btnMerge = document.getElementById('btn-merge');
+    btnMerge.disabled = true;
+    btnMerge.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="w-5 h-5 spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Fusion...</span>';
+    
+    try {
+        const res = await fetch(`${API_BASE}/videos/merge`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ videoIds: mergeQueue.map(v => v.id) })
+        });
+        
+        const data = await res.json();
+        
+        if (data.jobId) {
+            mergeQueue = [];
+            renderMergeQueue();
+            pollJobs();
+        }
+    } catch (err) {
+        console.error('Merge error:', err);
+        alert('Erreur lors de la fusion');
+    } finally {
+        btnMerge.disabled = mergeQueue.length < 2;
+        btnMerge.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>Fusionner les Vidéos</span>';
+    }
+}
+
+async function pollJobs() {
+    try {
+        const res = await fetch(`${API_BASE}/jobs`);
+        jobs = await res.json();
+        renderJobs();
+        
+        const hasActiveJobs = jobs.some(j => j.status === 'processing' || j.status === 'pending');
+        if (hasActiveJobs) {
+            setTimeout(pollJobs, 2000);
+        }
+    } catch (err) {
+        console.error('Error polling jobs:', err);
+    }
+}
+
+function renderJobs() {
+    const splitJobsEl = document.getElementById('split-jobs');
+    const mergeJobsEl = document.getElementById('merge-jobs');
+    
+    const splitJobs = jobs.filter(j => j.type === 'split');
+    const mergeJobs = jobs.filter(j => j.type === 'merge');
+    
+    splitJobsEl.innerHTML = splitJobs.map(j => renderJobCard(j)).join('');
+    mergeJobsEl.innerHTML = mergeJobs.map(j => renderJobCard(j)).join('');
+}
+
+function renderJobCard(job) {
+    const statusClass = job.status === 'completed' ? 'completed' : 
+                        job.status === 'error' ? 'error' : 'processing';
+    
+    const statusIcon = job.status === 'completed' ? 
+        '<svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>' :
+        job.status === 'error' ? 
+        '<svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' :
+        '<svg class="w-5 h-5 text-primary spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>';
+    
+    let downloadButtons = '';
+    if (job.status === 'completed') {
+        if (job.type === 'split' && job.outputs) {
+            downloadButtons = `
+                <div class="flex flex-wrap gap-2 mt-3">
+                    ${job.outputs.map((o, i) => `
+                        <a href="${API_BASE}/download/${o}" class="inline-flex items-center gap-1 bg-primary/20 text-primary px-3 py-1 rounded-lg text-sm hover:bg-primary/30 transition-colors" data-testid="download-segment-${i}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Segment ${i + 1}
+                        </a>
+                    `).join('')}
+                </div>
+            `;
+        } else if (job.type === 'merge' && job.output) {
+            downloadButtons = `
+                <div class="mt-3">
+                    <a href="${API_BASE}/download/${job.output}" class="inline-flex items-center gap-2 bg-success/20 text-success px-4 py-2 rounded-lg text-sm hover:bg-success/30 transition-colors" data-testid="download-merged">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        Télécharger la vidéo fusionnée
+                    </a>
+                </div>
+            `;
+        }
+    }
+    
+    return `
+        <div class="job-card ${statusClass}" data-testid="job-${job.id}">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    ${statusIcon}
+                    <div>
+                        <p class="font-medium">${job.type === 'split' ? 'Découpe' : 'Fusion'}</p>
+                        <p class="text-xs text-indigo-300">${job.status === 'completed' ? 'Terminé' : job.status === 'error' ? 'Erreur' : 'En cours...'}</p>
+                    </div>
+                </div>
+                ${job.status === 'processing' ? `
+                    <div class="text-right">
+                        <span class="text-lg font-bold text-primary">${job.progress || 0}%</span>
+                    </div>
+                ` : ''}
+            </div>
+            ${job.status === 'processing' ? `
+                <div class="mt-3 h-2 bg-indigo-900 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-primary to-accent transition-all duration-300" style="width: ${job.progress || 0}%"></div>
+                </div>
+            ` : ''}
+            ${downloadButtons}
+            ${job.status === 'error' && job.error ? `<p class="mt-2 text-sm text-red-400">${job.error}</p>` : ''}
+        </div>
+    `;
+}
+
+async function loadStats() {
+    try {
+        const res = await fetch(`${API_BASE}/stats`);
+        const stats = await res.json();
+        
+        document.getElementById('stat-split').textContent = stats.totalVideosSplit || 0;
+        document.getElementById('stat-segments').textContent = stats.totalSegmentsCreated || 0;
+        document.getElementById('stat-merged').textContent = stats.totalVideosMerged || 0;
+        document.getElementById('stat-time').textContent = Math.round((stats.totalTimeSaved || 0) / 60);
+        
+        renderAchievements(stats);
+    } catch (err) {
+        console.error('Error loading stats:', err);
+    }
+}
+
+function renderAchievements(stats) {
+    const achievements = [
+        { id: 'first-split', name: 'Premier Découpage', desc: 'Découpez votre première vidéo', icon: '✂️', unlocked: stats.totalVideosSplit >= 1 },
+        { id: 'first-merge', name: 'Première Fusion', desc: 'Fusionnez des vidéos pour la première fois', icon: '🔗', unlocked: stats.totalVideosMerged >= 1 },
+        { id: 'segment-master', name: 'Maître des Segments', desc: 'Créez 10 segments', icon: '🎯', unlocked: stats.totalSegmentsCreated >= 10 },
+        { id: 'video-pro', name: 'Video Pro', desc: 'Traitez 5 vidéos', icon: '🎬', unlocked: (stats.totalVideosSplit + stats.totalVideosMerged) >= 5 },
+        { id: 'time-saver', name: 'Gain de Temps', desc: 'Traitez 10 minutes de vidéo', icon: '⏱️', unlocked: stats.totalTimeSaved >= 600 }
+    ];
+    
+    const container = document.getElementById('achievements');
+    container.innerHTML = achievements.map(a => `
+        <div class="achievement-card ${a.unlocked ? 'unlocked' : ''}" data-testid="achievement-${a.id}">
+            <div class="achievement-icon ${a.unlocked ? 'bg-accent/30' : 'bg-indigo-800/50'}">
+                ${a.unlocked ? a.icon : '🔒'}
+            </div>
+            <div class="flex-1">
+                <p class="font-medium ${a.unlocked ? 'text-accent' : 'text-indigo-400'}">${a.name}</p>
+                <p class="text-xs text-indigo-300">${a.desc}</p>
+            </div>
+            ${a.unlocked ? '<svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>' : ''}
+        </div>
+    `).join('');
+}
+
+function formatDuration(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}

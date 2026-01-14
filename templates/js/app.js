@@ -22,17 +22,32 @@ function initTheme() {
     const html = document.documentElement;
     
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        html.classList.toggle('dark', savedTheme === 'dark');
+    if (savedTheme === 'light') {
+        html.classList.remove('dark');
+    } else if (savedTheme === 'dark') {
+        html.classList.add('dark');
     } else {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        html.classList.toggle('dark', prefersDark);
+        if (prefersDark) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
     }
     
-    themeToggle.addEventListener('click', () => {
-        html.classList.toggle('dark');
-        localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-    });
+    if (themeToggle) {
+        themeToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isDark = html.classList.contains('dark');
+            if (isDark) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    }
 }
 
 function initNavigation() {

@@ -6,6 +6,7 @@ let jobs = [];
 let tiktokDownloads = [];
 
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     initNavigation();
     initUpload();
     initSplit();
@@ -15,6 +16,24 @@ document.addEventListener('DOMContentLoaded', () => {
     loadStats();
     pollJobs();
 });
+
+function initTheme() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        html.classList.toggle('dark', savedTheme === 'dark');
+    } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        html.classList.toggle('dark', prefersDark);
+    }
+    
+    themeToggle.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+}
 
 function initNavigation() {
     document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -43,16 +62,16 @@ function initUpload() {
     
     zone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        zone.classList.add('border-primary', 'bg-white/10');
+        zone.classList.add('dragover');
     });
     
     zone.addEventListener('dragleave', () => {
-        zone.classList.remove('border-primary', 'bg-white/10');
+        zone.classList.remove('dragover');
     });
     
     zone.addEventListener('drop', (e) => {
         e.preventDefault();
-        zone.classList.remove('border-primary', 'bg-white/10');
+        zone.classList.remove('dragover');
         const files = e.dataTransfer.files;
         if (files.length > 0) uploadVideo(files[0]);
     });
@@ -128,7 +147,7 @@ function renderVideos() {
     
     if (videos.length === 0) {
         container.innerHTML = `
-            <div class="text-center text-indigo-400 py-8">
+            <div class="text-center text-night-500 dark:text-night-400 py-8">
                 <p>Aucune vidéo uploadée</p>
             </div>
         `;
@@ -138,14 +157,14 @@ function renderVideos() {
     container.innerHTML = videos.map(v => `
         <div class="video-card" data-testid="video-card-${v.id}">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-indigo-600/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                     </svg>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="font-medium truncate">${v.originalName}</p>
-                    <div class="flex items-center gap-3 text-xs text-indigo-300">
+                    <p class="font-medium truncate text-night-900 dark:text-white">${v.originalName}</p>
+                    <div class="flex items-center gap-3 text-xs text-night-500 dark:text-night-400">
                         <span>${formatDuration(v.duration)}</span>
                         <span>${formatFileSize(v.size)}</span>
                     </div>
@@ -261,16 +280,16 @@ function initMerge() {
     
     zone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        zone.classList.add('border-success', 'bg-white/10');
+        zone.classList.add('dragover');
     });
     
     zone.addEventListener('dragleave', () => {
-        zone.classList.remove('border-success', 'bg-white/10');
+        zone.classList.remove('dragover');
     });
     
     zone.addEventListener('drop', (e) => {
         e.preventDefault();
-        zone.classList.remove('border-success', 'bg-white/10');
+        zone.classList.remove('dragover');
         handleMergeFiles(e.dataTransfer.files);
     });
     
@@ -431,7 +450,7 @@ function renderTikTokDownloads() {
     
     if (tiktokDownloads.length === 0) {
         container.innerHTML = `
-            <div class="text-center text-indigo-400 py-8">
+            <div class="text-center text-night-500 dark:text-night-400 py-8">
                 <p>Aucune vidéo téléchargée</p>
             </div>
         `;
@@ -439,21 +458,21 @@ function renderTikTokDownloads() {
     }
     
     container.innerHTML = tiktokDownloads.map(v => `
-        <div class="video-card" data-testid="tiktok-card-${v.id}">
+        <div class="tiktok-download-card" data-testid="tiktok-card-${v.id}">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-pink-600/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <svg class="w-6 h-6 text-pink-400" viewBox="0 0 24 24" fill="currentColor">
+                <div class="w-12 h-12 bg-tiktok/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 text-tiktok" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
                     </svg>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="font-medium truncate">${v.title || 'TikTok Video'}</p>
-                    <div class="flex items-center gap-3 text-xs text-indigo-300">
+                    <p class="font-medium truncate text-night-900 dark:text-white">${v.title || 'TikTok Video'}</p>
+                    <div class="flex items-center gap-3 text-xs text-night-500 dark:text-night-400">
                         <span>@${v.uploader || 'unknown'}</span>
                         ${v.duration ? `<span>${formatDuration(v.duration)}</span>` : ''}
                     </div>
                 </div>
-                <a href="${API_BASE}/download/${v.filename}" class="bg-tiktok/20 text-tiktok p-2 rounded-lg hover:bg-tiktok/30 transition-colors" data-testid="download-tiktok-${v.id}">
+                <a href="${API_BASE}/download/${v.filename}" class="bg-tiktok/20 text-tiktok p-2 rounded-lg hover:bg-tiktok/30 transition-all duration-200" data-testid="download-tiktok-${v.id}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                     </svg>
@@ -496,7 +515,7 @@ function renderJobCard(job) {
     const statusIcon = job.status === 'completed' ? 
         '<svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>' :
         job.status === 'error' ? 
-        '<svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' :
+        '<svg class="w-5 h-5 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' :
         '<svg class="w-5 h-5 text-primary spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>';
     
     let downloadButtons = '';
@@ -505,7 +524,7 @@ function renderJobCard(job) {
             downloadButtons = `
                 <div class="flex flex-wrap gap-2 mt-3">
                     ${job.outputs.map((o, i) => `
-                        <a href="${API_BASE}/download/${o}" class="inline-flex items-center gap-1 bg-primary/20 text-primary px-3 py-1 rounded-lg text-sm hover:bg-primary/30 transition-colors" data-testid="download-segment-${i}">
+                        <a href="${API_BASE}/download/${o}" class="inline-flex items-center gap-1 bg-primary/20 text-primary px-3 py-1 rounded-lg text-sm hover:bg-primary/30 transition-all duration-200" data-testid="download-segment-${i}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                             </svg>
@@ -517,7 +536,7 @@ function renderJobCard(job) {
         } else if (job.type === 'merge' && job.output) {
             downloadButtons = `
                 <div class="mt-3">
-                    <a href="${API_BASE}/download/${job.output}" class="inline-flex items-center gap-2 bg-success/20 text-success px-4 py-2 rounded-lg text-sm hover:bg-success/30 transition-colors" data-testid="download-merged">
+                    <a href="${API_BASE}/download/${job.output}" class="inline-flex items-center gap-2 bg-success/20 text-success px-4 py-2 rounded-lg text-sm hover:bg-success/30 transition-all duration-200" data-testid="download-merged">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                         </svg>
@@ -534,8 +553,8 @@ function renderJobCard(job) {
                 <div class="flex items-center gap-3">
                     ${statusIcon}
                     <div>
-                        <p class="font-medium">${job.type === 'split' ? 'Découpe' : 'Fusion'}</p>
-                        <p class="text-xs text-indigo-300">${job.status === 'completed' ? 'Terminé' : job.status === 'error' ? 'Erreur' : 'En cours...'}</p>
+                        <p class="font-medium text-night-900 dark:text-white">${job.type === 'split' ? 'Découpe' : 'Fusion'}</p>
+                        <p class="text-xs text-night-500 dark:text-night-400">${job.status === 'completed' ? 'Terminé' : job.status === 'error' ? 'Erreur' : 'En cours...'}</p>
                     </div>
                 </div>
                 ${job.status === 'processing' ? `
@@ -545,12 +564,12 @@ function renderJobCard(job) {
                 ` : ''}
             </div>
             ${job.status === 'processing' ? `
-                <div class="mt-3 h-2 bg-indigo-900 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-primary to-accent transition-all duration-300" style="width: ${job.progress || 0}%"></div>
+                <div class="mt-3 h-2 bg-night-200 dark:bg-night-700 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-primary to-accent transition-all duration-300 rounded-full" style="width: ${job.progress || 0}%"></div>
                 </div>
             ` : ''}
             ${downloadButtons}
-            ${job.status === 'error' && job.error ? `<p class="mt-2 text-sm text-red-400">${job.error}</p>` : ''}
+            ${job.status === 'error' && job.error ? `<p class="mt-2 text-sm text-danger">${job.error}</p>` : ''}
         </div>
     `;
 }

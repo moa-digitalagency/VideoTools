@@ -519,7 +519,7 @@ function renderTikTokDownloads() {
                         ${v.duration ? `<span>${formatDuration(v.duration)}</span>` : ''}
                     </div>
                 </div>
-                <a href="${API_BASE}/download/${v.filename}" class="bg-purple-500/20 text-purple-500 p-2 rounded-lg hover:bg-purple-500/30 transition-all duration-200" data-testid="download-social-${v.id}" download="${v.filename}">
+                <a href="${API_BASE}/download/${encodeURIComponent(v.filename)}" class="bg-purple-500/20 text-purple-500 p-2 rounded-lg hover:bg-purple-500/30 transition-all duration-200" data-testid="download-social-${v.id}" download="${v.filename}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                     </svg>
@@ -571,7 +571,7 @@ function renderJobCard(job) {
             downloadButtons = `
                 <div class="flex flex-wrap gap-2 mt-3">
                     ${job.outputs.map((o, i) => `
-                        <a href="${API_BASE}/download/${o}" class="inline-flex items-center gap-1 bg-primary/20 text-primary px-3 py-1 rounded-lg text-sm hover:bg-primary/30 transition-all duration-200" data-testid="download-segment-${i}">
+                        <a href="${API_BASE}/download/${encodeURIComponent(o)}" class="inline-flex items-center gap-1 bg-primary/20 text-primary px-3 py-1 rounded-lg text-sm hover:bg-primary/30 transition-all duration-200" data-testid="download-segment-${i}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                             </svg>
@@ -583,7 +583,7 @@ function renderJobCard(job) {
         } else if (job.type === 'merge' && job.output) {
             downloadButtons = `
                 <div class="mt-3">
-                    <a href="${API_BASE}/download/${job.output}" class="inline-flex items-center gap-2 bg-success/20 text-success px-4 py-2 rounded-lg text-sm hover:bg-success/30 transition-all duration-200" data-testid="download-merged">
+                    <a href="${API_BASE}/download/${encodeURIComponent(job.output)}" class="inline-flex items-center gap-2 bg-success/20 text-success px-4 py-2 rounded-lg text-sm hover:bg-success/30 transition-all duration-200" data-testid="download-merged">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                         </svg>

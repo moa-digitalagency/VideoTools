@@ -96,21 +96,23 @@ def merge_videos():
     return jsonify({"jobId": job['id'], **job})
 
 
-@videos_bp.route('/api/download/<filename>', methods=['GET'])
+@videos_bp.route('/api/download/<path:filename>', methods=['GET'])
 def download_output(filename):
-    file_path = os.path.join(OUTPUT_DIR, filename)
+    from urllib.parse import unquote
+    decoded_filename = unquote(filename)
+    file_path = os.path.join(OUTPUT_DIR, decoded_filename)
     
     if not os.path.exists(file_path):
         return jsonify({"error": "File not found"}), 404
     
     @after_this_request
     def cleanup(response):
-        if 'tiktok_' in filename:
+        if 'tiktok_' in decoded_filename or 'instagram_' in decoded_filename or 'facebook_' in decoded_filename or 'youtube_' in decoded_filename:
             VideoService.cleanup_file_after_download(file_path)
         return response
     
     return send_file(
         file_path,
         as_attachment=True,
-        download_name=filename
+        download_name=decoded_filename
     )

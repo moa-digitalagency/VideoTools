@@ -51,9 +51,12 @@ class SocialVideoService:
     
     @staticmethod
     def sanitize_filename(title: str) -> str:
-        sanitized = re.sub(r'[<>:"/\\|?*]', '', title)
+        sanitized = re.sub(r'[<>:"/\\|?*#%&{}$!\'`@^+=\[\]]', '', title)
         sanitized = re.sub(r'\s+', '_', sanitized)
-        sanitized = sanitized[:100]
+        sanitized = re.sub(r'\.+', '.', sanitized)
+        sanitized = re.sub(r'_+', '_', sanitized)
+        sanitized = sanitized.strip('._')
+        sanitized = sanitized[:80]
         return sanitized if sanitized else 'video'
     
     @staticmethod

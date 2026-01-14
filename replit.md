@@ -15,7 +15,7 @@ VideoSplit is a mobile-first web application for splitting and merging video fil
 **Backend**: Python Flask with modular architecture (flat structure at root)
 - `app.py` - Flask application factory
 - `config.py` - Configuration settings
-- `run.py` - Entry point
+- `main.py` - Entry point
 - `models/` - Data models (Video, Job, Stats)
 - `routes/` - API route handlers
 - `services/` - Business logic (VideoService)
@@ -30,9 +30,10 @@ Preferred communication style: Simple, everyday language.
 
 ```
 /
+├── main.py             # Entry point
 ├── app.py              # Flask app factory
 ├── config.py           # Configuration
-├── run.py              # Entry point
+├── requirements.txt    # Python dependencies
 ├── models/
 │   ├── __init__.py
 │   ├── video.py        # Video data model
@@ -58,7 +59,7 @@ Preferred communication style: Simple, everyday language.
 │   ├── css/style.css   # Styles
 │   └── js/app.js       # JavaScript
 ├── uploads/            # Uploaded video files
-└── outputs/            # Processed video files
+└── outputs/            # Split/merged video results
 ```
 
 ## API Endpoints
@@ -101,11 +102,12 @@ Preferred communication style: Simple, everyday language.
 ### Video Processing
 - **FFmpeg**: Installed via Nix for video operations
 
-### Python Dependencies
+### Python Dependencies (requirements.txt)
 - `flask` - Web framework
 - `flask-cors` - CORS support
+- `python-dotenv` - Environment variables
 - `werkzeug` - File upload handling
 
 ## File Storage
-- `uploads/` - Uploaded video files
-- `outputs/` - Processed video segments and merged files
+- `uploads/` - Uploaded video files (user uploads go here)
+- `outputs/` - Split/merged video results (processed files go here)

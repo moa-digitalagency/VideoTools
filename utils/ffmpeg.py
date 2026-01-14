@@ -207,7 +207,7 @@ class FFmpegHelper:
                 "-ss", str(start_time),
                 "-i", input_path,
                 "-t", str(duration),
-                "-vf", "scale=-2:720",
+                "-vf", "scale=trunc(oh*a/2)*2:720",
                 "-c:v", FFMPEG_VIDEO_CODEC,
                 "-preset", FFMPEG_PRESET,
                 "-crf", FFMPEG_CRF,
@@ -221,6 +221,8 @@ class FFmpegHelper:
             
             if result.returncode == 0 and os.path.exists(output_file):
                 outputs.append(os.path.basename(output_file))
+            else:
+                print(f"FFmpeg 720p split error: {result.stderr}")
         
         return outputs
     
@@ -240,7 +242,7 @@ class FFmpegHelper:
             "-f", "concat",
             "-safe", "0",
             "-i", concat_file,
-            "-vf", "scale=-2:720",
+            "-vf", "scale=trunc(oh*a/2)*2:720",
             "-c:v", FFMPEG_VIDEO_CODEC,
             "-preset", FFMPEG_PRESET,
             "-crf", FFMPEG_CRF,

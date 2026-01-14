@@ -12,6 +12,13 @@
     <script>
         tailwind.config = {
             darkMode: 'class',
+            safelist: [
+                'bg-tiktok/20', 'text-tiktok',
+                'bg-pink-500/20', 'text-pink-500',
+                'bg-blue-600/20', 'text-blue-600',
+                'bg-red-600/20', 'text-red-600',
+                'bg-purple-500/20', 'text-purple-500'
+            ],
             theme: {
                 extend: {
                     fontFamily: {
@@ -71,7 +78,72 @@
         </header>
 
         <main class="flex-1 px-4 pb-24 overflow-y-auto">
-            <div id="page-upload" class="page active">
+            <div id="page-home" class="page active">
+                <div class="text-center mb-6">
+                    <h2 class="text-xl font-bold text-night-900 dark:text-white mb-2">Bienvenue sur VideoSplit</h2>
+                    <p class="text-night-500 dark:text-night-400 text-sm">Choisissez un service pour commencer</p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <button class="service-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 border border-night-200 dark:border-night-700 hover:border-primary dark:hover:border-primary hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 text-left" data-goto="upload" data-testid="service-upload">
+                        <div class="w-14 h-14 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 mb-4">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-night-900 dark:text-white mb-1">Upload</h3>
+                        <p class="text-xs text-night-500 dark:text-night-400">Importer vos vidéos</p>
+                    </button>
+                    
+                    <button class="service-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 border border-night-200 dark:border-night-700 hover:border-warning dark:hover:border-warning hover:shadow-lg hover:shadow-warning/10 transition-all duration-300 text-left" data-goto="split" data-testid="service-split">
+                        <div class="w-14 h-14 bg-gradient-to-br from-warning to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-warning/20 mb-4">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-night-900 dark:text-white mb-1">Découper</h3>
+                        <p class="text-xs text-night-500 dark:text-night-400">Diviser en segments</p>
+                    </button>
+                    
+                    <button class="service-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 border border-night-200 dark:border-night-700 hover:border-success dark:hover:border-success hover:shadow-lg hover:shadow-success/10 transition-all duration-300 text-left" data-goto="merge" data-testid="service-merge">
+                        <div class="w-14 h-14 bg-gradient-to-br from-success to-emerald-400 rounded-xl flex items-center justify-center shadow-lg shadow-success/20 mb-4">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-night-900 dark:text-white mb-1">Fusionner</h3>
+                        <p class="text-xs text-night-500 dark:text-night-400">Combiner des vidéos</p>
+                    </button>
+                    
+                    <button class="service-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 border border-night-200 dark:border-night-700 hover:border-purple-500 dark:hover:border-purple-500 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300 text-left" data-goto="download" data-testid="service-download">
+                        <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 mb-4">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-night-900 dark:text-white mb-1">Télécharger</h3>
+                        <p class="text-xs text-night-500 dark:text-night-400">TikTok, Insta, FB, YT</p>
+                    </button>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <button class="service-block inline-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl px-6 py-4 border border-night-200 dark:border-night-700 hover:border-purple-500 dark:hover:border-purple-500 hover:shadow-lg transition-all duration-300" data-goto="stats" data-testid="service-stats">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="font-semibold text-night-900 dark:text-white text-sm">Statistiques</h3>
+                                <p class="text-xs text-night-500 dark:text-night-400">Voir vos achievements</p>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <div id="page-upload" class="page hidden">
                 <div class="card bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 mb-4 border border-night-200 dark:border-night-700">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-12 h-12 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
@@ -127,8 +199,23 @@
                     </div>
 
                     <div class="space-y-4">
+                        <div id="split-upload-zone" class="upload-zone border-2 border-dashed border-warning/40 rounded-xl p-4 text-center cursor-pointer hover:border-warning hover:bg-warning/5 dark:hover:bg-warning/10 transition-all duration-300 mb-4" data-testid="split-upload-zone">
+                            <input type="file" id="split-video-input" accept="video/*" class="hidden" data-testid="input-split-video">
+                            <div class="flex items-center justify-center gap-3">
+                                <div class="w-10 h-10 bg-warning/20 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                    </svg>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-night-700 dark:text-night-200 font-medium text-sm">Uploader une vidéo à découper</p>
+                                    <p class="text-xs text-night-500 dark:text-night-400">ou sélectionnez ci-dessous</p>
+                                </div>
+                            </div>
+                        </div>
+
                         <div>
-                            <label class="block text-sm text-night-600 dark:text-night-300 mb-2 font-medium">Sélectionner une vidéo</label>
+                            <label class="block text-sm text-night-600 dark:text-night-300 mb-2 font-medium">Sélectionner une vidéo uploadée</label>
                             <select id="split-video-select" class="w-full bg-white dark:bg-night-700/50 border border-night-300 dark:border-night-600 rounded-xl px-4 py-3 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-night-900 dark:text-white" data-testid="select-split-video">
                                 <option value="">Choisir une vidéo...</option>
                             </select>
@@ -224,27 +311,54 @@
                 <div id="merge-jobs" class="space-y-3"></div>
             </div>
 
-            <div id="page-tiktok" class="page hidden">
+            <div id="page-download" class="page hidden">
                 <div class="card bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 mb-4 border border-night-200 dark:border-night-700">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-12 h-12 bg-gradient-to-br from-tiktok to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-tiktok/20">
-                            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                             </svg>
                         </div>
                         <div>
-                            <h2 class="font-semibold text-night-900 dark:text-white">TikTok Downloader</h2>
-                            <p class="text-xs text-night-500 dark:text-night-400">Télécharger des vidéos TikTok</p>
+                            <h2 class="font-semibold text-night-900 dark:text-white">Social Video Downloader</h2>
+                            <p class="text-xs text-night-500 dark:text-night-400">TikTok, Instagram, Facebook, YouTube</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-2 mb-4">
+                        <div class="flex flex-col items-center p-2 bg-night-100 dark:bg-night-700/30 rounded-lg">
+                            <svg class="w-6 h-6 text-tiktok" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                            </svg>
+                            <span class="text-xs mt-1 text-night-600 dark:text-night-400">TikTok</span>
+                        </div>
+                        <div class="flex flex-col items-center p-2 bg-night-100 dark:bg-night-700/30 rounded-lg">
+                            <svg class="w-6 h-6 text-pink-500" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                            <span class="text-xs mt-1 text-night-600 dark:text-night-400">Instagram</span>
+                        </div>
+                        <div class="flex flex-col items-center p-2 bg-night-100 dark:bg-night-700/30 rounded-lg">
+                            <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                            <span class="text-xs mt-1 text-night-600 dark:text-night-400">Facebook</span>
+                        </div>
+                        <div class="flex flex-col items-center p-2 bg-night-100 dark:bg-night-700/30 rounded-lg">
+                            <svg class="w-6 h-6 text-red-600" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                            <span class="text-xs mt-1 text-night-600 dark:text-night-400">YouTube</span>
                         </div>
                     </div>
 
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm text-night-600 dark:text-night-300 mb-2 font-medium">URL de la vidéo TikTok</label>
-                            <input type="url" id="tiktok-url" placeholder="https://www.tiktok.com/@user/video/..." class="w-full bg-white dark:bg-night-700/50 border border-night-300 dark:border-night-600 rounded-xl px-4 py-3 focus:outline-none focus:border-tiktok focus:ring-2 focus:ring-tiktok/20 transition-all text-night-900 dark:text-white placeholder-night-400" data-testid="input-tiktok-url">
+                            <label class="block text-sm text-night-600 dark:text-night-300 mb-2 font-medium">URL de la vidéo</label>
+                            <input type="url" id="tiktok-url" placeholder="Collez l'URL de TikTok, Instagram, Facebook ou YouTube..." class="w-full bg-white dark:bg-night-700/50 border border-night-300 dark:border-night-600 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all text-night-900 dark:text-white placeholder-night-400" data-testid="input-social-url">
                         </div>
 
-                        <button id="btn-tiktok-download" class="btn-primary w-full bg-gradient-to-r from-tiktok to-pink-500 text-white font-semibold py-4 rounded-xl hover:shadow-lg hover:shadow-tiktok/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none" data-testid="button-tiktok-download">
+                        <button id="btn-tiktok-download" class="btn-primary w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-4 rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none" data-testid="button-social-download">
                             <span class="flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
@@ -317,11 +431,11 @@
 
         <nav class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-night-900/95 backdrop-blur-lg border-t border-night-200 dark:border-night-700 px-2 py-2 safe-area-bottom">
             <div class="flex justify-around max-w-md mx-auto">
-                <button class="nav-btn active flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-200" data-page="upload" data-testid="nav-upload">
+                <button class="nav-btn active flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-200" data-page="home" data-testid="nav-home">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                     </svg>
-                    <span class="text-xs font-medium">Upload</span>
+                    <span class="text-xs font-medium">Accueil</span>
                 </button>
                 <button class="nav-btn flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-200" data-page="split" data-testid="nav-split">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -335,11 +449,11 @@
                     </svg>
                     <span class="text-xs font-medium">Fusionner</span>
                 </button>
-                <button class="nav-btn flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-200" data-page="tiktok" data-testid="nav-tiktok">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                <button class="nav-btn flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-200" data-page="download" data-testid="nav-download">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                     </svg>
-                    <span class="text-xs font-medium">TikTok</span>
+                    <span class="text-xs font-medium">Download</span>
                 </button>
                 <button class="nav-btn flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-200" data-page="stats" data-testid="nav-stats">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

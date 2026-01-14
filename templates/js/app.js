@@ -68,21 +68,37 @@ function initTheme() {
 function initNavigation() {
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            const page = btn.dataset.page;
-            showPage(page);
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            navigateToPage(btn.dataset.page);
+        });
+    });
+    
+    document.querySelectorAll('.service-block').forEach(block => {
+        block.addEventListener('click', () => {
+            navigateToPage(block.dataset.goto);
         });
     });
 }
 
-function showPage(pageName) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(`page-${pageName}`).classList.add('active');
+function navigateToPage(pageName) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => {
+        p.classList.add('hidden');
+        p.classList.remove('active');
+    });
+    
+    const navBtn = document.querySelector(`.nav-btn[data-page="${pageName}"]`);
+    if (navBtn) navBtn.classList.add('active');
+    
+    const page = document.getElementById(`page-${pageName}`);
+    if (page) {
+        page.classList.remove('hidden');
+        page.classList.add('active');
+    }
     
     if (pageName === 'split') updateSplitVideoSelect();
     if (pageName === 'stats') loadStats();
 }
+
 
 function initUpload() {
     const zone = document.getElementById('upload-zone');
@@ -208,6 +224,33 @@ function initSplit() {
     const select = document.getElementById('split-video-select');
     const durationInput = document.getElementById('segment-duration');
     const btnSplit = document.getElementById('btn-split');
+    const splitUploadZone = document.getElementById('split-upload-zone');
+    const splitVideoInput = document.getElementById('split-video-input');
+    
+    splitUploadZone.addEventListener('click', () => splitVideoInput.click());
+    
+    splitUploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        splitUploadZone.classList.add('dragover');
+    });
+    
+    splitUploadZone.addEventListener('dragleave', () => {
+        splitUploadZone.classList.remove('dragover');
+    });
+    
+    splitUploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        splitUploadZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length > 0) {
+            uploadVideoForSplit(e.dataTransfer.files[0]);
+        }
+    });
+    
+    splitVideoInput.addEventListener('change', () => {
+        if (splitVideoInput.files.length > 0) {
+            uploadVideoForSplit(splitVideoInput.files[0]);
+        }
+    });
     
     select.addEventListener('change', updateSplitPreview);
     durationInput.addEventListener('input', updateSplitPreview);
@@ -220,6 +263,29 @@ function initSplit() {
             splitVideo(videoId, segmentDuration);
         }
     });
+}
+
+async function uploadVideoForSplit(file) {
+    const formData = new FormData();
+    formData.append('video', file);
+    
+    try {
+        const res = await fetch(`${API_BASE}/videos/upload`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        const video = await res.json();
+        if (video.id) {
+            videos.push(video);
+            updateSplitVideoSelect();
+            document.getElementById('split-video-select').value = video.id;
+            updateSplitPreview();
+        }
+    } catch (err) {
+        console.error('Error uploading video for split:', err);
+        alert('Erreur lors de l\'upload');
+    }
 }
 
 function updateSplitVideoSelect() {
@@ -464,7 +530,7 @@ async function downloadTikTok(url) {
     loadingDiv.classList.remove('hidden');
     
     try {
-        const res = await fetch(`${API_BASE}/tiktok/download`, {
+        const res = await fetch(`${API_BASE}/social/download`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url })
@@ -480,7 +546,7 @@ async function downloadTikTok(url) {
             urlInput.value = '';
         }
     } catch (err) {
-        console.error('TikTok download error:', err);
+        console.error('Social download error:', err);
         alert('Erreur lors du téléchargement');
     } finally {
         btnDownload.disabled = false;
@@ -501,29 +567,58 @@ function renderTikTokDownloads() {
         return;
     }
     
-    container.innerHTML = tiktokDownloads.map(v => `
-        <div class="tiktok-download-card" data-testid="tiktok-card-${v.id}">
+    container.innerHTML = tiktokDownloads.map(v => {
+        let iconBgClass = 'bg-purple-500/20';
+        let iconTextClass = 'text-purple-500';
+        let badgeBgClass = 'bg-purple-500/20';
+        let badgeTextClass = 'text-purple-500';
+        
+        if (v.platform === 'TikTok') {
+            iconBgClass = 'bg-tiktok/20';
+            iconTextClass = 'text-tiktok';
+            badgeBgClass = 'bg-tiktok/20';
+            badgeTextClass = 'text-tiktok';
+        } else if (v.platform === 'Instagram') {
+            iconBgClass = 'bg-pink-500/20';
+            iconTextClass = 'text-pink-500';
+            badgeBgClass = 'bg-pink-500/20';
+            badgeTextClass = 'text-pink-500';
+        } else if (v.platform === 'Facebook') {
+            iconBgClass = 'bg-blue-600/20';
+            iconTextClass = 'text-blue-600';
+            badgeBgClass = 'bg-blue-600/20';
+            badgeTextClass = 'text-blue-600';
+        } else if (v.platform === 'YouTube') {
+            iconBgClass = 'bg-red-600/20';
+            iconTextClass = 'text-red-600';
+            badgeBgClass = 'bg-red-600/20';
+            badgeTextClass = 'text-red-600';
+        }
+        
+        return `
+        <div class="social-download-card bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-xl p-4 border border-night-200 dark:border-night-700 mb-3" data-testid="social-card-${v.id}">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-tiktok/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <svg class="w-6 h-6 text-tiktok" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                <div class="w-12 h-12 ${iconBgClass} rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 ${iconTextClass}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                     </svg>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="font-medium truncate text-night-900 dark:text-white">${v.title || 'TikTok Video'}</p>
+                    <p class="font-medium truncate text-night-900 dark:text-white">${v.title || 'Video'}</p>
                     <div class="flex items-center gap-3 text-xs text-night-500 dark:text-night-400">
+                        <span class="${badgeBgClass} ${badgeTextClass} px-2 py-0.5 rounded-full text-xs">${v.platform || 'Social'}</span>
                         <span>@${v.uploader || 'unknown'}</span>
                         ${v.duration ? `<span>${formatDuration(v.duration)}</span>` : ''}
                     </div>
                 </div>
-                <a href="${API_BASE}/download/${v.filename}" class="bg-tiktok/20 text-tiktok p-2 rounded-lg hover:bg-tiktok/30 transition-all duration-200" data-testid="download-tiktok-${v.id}">
+                <a href="${API_BASE}/download/${v.filename}" class="bg-purple-500/20 text-purple-500 p-2 rounded-lg hover:bg-purple-500/30 transition-all duration-200" data-testid="download-social-${v.id}" download="${v.filename}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                     </svg>
                 </a>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 }
 
 async function pollJobs() {

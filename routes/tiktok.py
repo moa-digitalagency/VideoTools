@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 
-from services.tiktok_service import TikTokService
+from services.social_service import SocialVideoService
 
 tiktok_bp = Blueprint('tiktok', __name__)
 
@@ -13,7 +13,23 @@ def download_tiktok():
     if not url:
         return jsonify({"error": "URL is required"}), 400
     
-    result, error = TikTokService.download_video(url)
+    result, error = SocialVideoService.download_video(url)
+    
+    if error:
+        return jsonify({"error": error}), 400
+    
+    return jsonify(result)
+
+
+@tiktok_bp.route('/api/social/download', methods=['POST'])
+def download_social():
+    data = request.get_json()
+    url = data.get('url', '').strip()
+    
+    if not url:
+        return jsonify({"error": "URL is required"}), 400
+    
+    result, error = SocialVideoService.download_video(url)
     
     if error:
         return jsonify({"error": error}), 400

@@ -428,12 +428,14 @@ async function downloadTikTok(url) {
     const btnDownload = document.getElementById('btn-tiktok-download');
     const loadingDiv = document.getElementById('tiktok-loading');
     const urlInput = document.getElementById('tiktok-url');
+    const convert720Toggle = document.getElementById('social-convert-720');
+    const convert720 = convert720Toggle ? convert720Toggle.checked : false;
     const originalContent = btnDownload.innerHTML;
     
     btnDownload.disabled = true;
     btnDownload.innerHTML = `<span class="flex items-center justify-center gap-2">
         <div class="w-6 h-6"><dotlottie-player src="https://lottie.host/fe611542-3d6e-4a7a-939b-f057ee86c662/mHagjNySSC.lottie" background="transparent" speed="1" style="width:24px;height:24px" loop autoplay></dotlottie-player></div>
-        Téléchargement...
+        Téléchargement${convert720 ? ' + 720p' : ''}...
     </span>`;
     loadingDiv.classList.remove('hidden');
     
@@ -441,7 +443,7 @@ async function downloadTikTok(url) {
         const res = await fetch(`${API_BASE}/social/download`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url })
+            body: JSON.stringify({ url, convert720 })
         });
         
         const data = await res.json();
@@ -469,7 +471,7 @@ function renderTikTokDownloads() {
     if (tiktokDownloads.length === 0) {
         container.innerHTML = `
             <div class="text-center text-night-500 dark:text-night-400 py-8">
-                <p>Aucune vidéo téléchargée</p>
+                <p>Aucun média téléchargé</p>
             </div>
         `;
         return;
@@ -480,6 +482,15 @@ function renderTikTokDownloads() {
         let iconTextClass = 'text-purple-500';
         let badgeBgClass = 'bg-purple-500/20';
         let badgeTextClass = 'text-purple-500';
+        let mediaIcon = `<svg class="w-6 h-6 ${iconTextClass}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+        </svg>`;
+        
+        if (v.media_type === 'image') {
+            mediaIcon = `<svg class="w-6 h-6 ${iconTextClass}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>`;
+        }
         
         if (v.platform === 'TikTok') {
             iconBgClass = 'bg-tiktok/20';
@@ -501,20 +512,33 @@ function renderTikTokDownloads() {
             iconTextClass = 'text-red-600';
             badgeBgClass = 'bg-red-600/20';
             badgeTextClass = 'text-red-600';
+        } else if (v.platform === 'Twitter/X') {
+            iconBgClass = 'bg-gray-800/20 dark:bg-gray-200/20';
+            iconTextClass = 'text-gray-800 dark:text-gray-200';
+            badgeBgClass = 'bg-gray-800/20 dark:bg-gray-200/20';
+            badgeTextClass = 'text-gray-800 dark:text-gray-200';
+        } else if (v.platform === 'Snapchat') {
+            iconBgClass = 'bg-yellow-400/20';
+            iconTextClass = 'text-yellow-500';
+            badgeBgClass = 'bg-yellow-400/20';
+            badgeTextClass = 'text-yellow-600 dark:text-yellow-400';
         }
+        
+        const convertedBadge = v.converted_720p ? '<span class="bg-purple-500/20 text-purple-500 px-2 py-0.5 rounded-full text-xs">720p</span>' : '';
+        const mediaTypeBadge = v.media_type === 'image' ? '<span class="bg-green-500/20 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full text-xs">Image</span>' : '';
         
         return `
         <div class="social-download-card bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-xl p-4 border border-night-200 dark:border-night-700 mb-3" data-testid="social-card-${v.id}">
             <div class="flex items-center gap-3">
                 <div class="w-12 h-12 ${iconBgClass} rounded-lg flex items-center justify-center flex-shrink-0">
-                    <svg class="w-6 h-6 ${iconTextClass}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                    </svg>
+                    ${mediaIcon}
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="font-medium truncate text-night-900 dark:text-white">${v.title || 'Video'}</p>
-                    <div class="flex items-center gap-3 text-xs text-night-500 dark:text-night-400">
+                    <p class="font-medium truncate text-night-900 dark:text-white">${v.title || 'Media'}</p>
+                    <div class="flex items-center gap-2 text-xs text-night-500 dark:text-night-400 flex-wrap">
                         <span class="${badgeBgClass} ${badgeTextClass} px-2 py-0.5 rounded-full text-xs">${v.platform || 'Social'}</span>
+                        ${mediaTypeBadge}
+                        ${convertedBadge}
                         <span>@${v.uploader || 'unknown'}</span>
                         ${v.duration ? `<span>${formatDuration(v.duration)}</span>` : ''}
                     </div>

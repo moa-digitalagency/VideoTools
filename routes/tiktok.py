@@ -9,11 +9,12 @@ tiktok_bp = Blueprint('tiktok', __name__)
 def download_tiktok():
     data = request.get_json()
     url = data.get('url', '').strip()
+    convert_720 = data.get('convert720', False)
     
     if not url:
         return jsonify({"error": "URL is required"}), 400
     
-    result, error = SocialVideoService.download_video(url)
+    result, error = SocialVideoService.download_media(url, convert_720)
     
     if error:
         return jsonify({"error": error}), 400
@@ -25,11 +26,12 @@ def download_tiktok():
 def download_social():
     data = request.get_json()
     url = data.get('url', '').strip()
+    convert_720 = data.get('convert720', False)
     
     if not url:
         return jsonify({"error": "URL is required"}), 400
     
-    result, error = SocialVideoService.download_video(url)
+    result, error = SocialVideoService.download_media(url, convert_720)
     
     if error:
         return jsonify({"error": error}), 400

@@ -522,6 +522,16 @@ function renderTikTokDownloads() {
             iconTextClass = 'text-yellow-500';
             badgeBgClass = 'bg-yellow-400/20';
             badgeTextClass = 'text-yellow-600 dark:text-yellow-400';
+        } else if (v.platform === 'Threads') {
+            iconBgClass = 'bg-gray-800/20 dark:bg-gray-200/20';
+            iconTextClass = 'text-gray-800 dark:text-gray-200';
+            badgeBgClass = 'bg-gray-800/20 dark:bg-gray-200/20';
+            badgeTextClass = 'text-gray-800 dark:text-gray-200';
+        } else if (v.platform === 'LinkedIn') {
+            iconBgClass = 'bg-blue-700/20';
+            iconTextClass = 'text-blue-700';
+            badgeBgClass = 'bg-blue-700/20';
+            badgeTextClass = 'text-blue-700';
         }
         
         const convertedBadge = v.converted_720p ? '<span class="bg-purple-500/20 text-purple-500 px-2 py-0.5 rounded-full text-xs">720p</span>' : '';

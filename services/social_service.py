@@ -45,6 +45,16 @@ class SocialMediaService:
             'patterns': ['snapchat.com/spotlight/', 'snapchat.com/add/', 'story.snapchat.com/'],
             'prefix': 'snapchat',
             'name': 'Snapchat'
+        },
+        'threads': {
+            'patterns': ['threads.net/'],
+            'prefix': 'threads',
+            'name': 'Threads'
+        },
+        'linkedin': {
+            'patterns': ['linkedin.com/posts/', 'linkedin.com/feed/', 'linkedin.com/video/'],
+            'prefix': 'linkedin',
+            'name': 'LinkedIn'
         }
     }
     

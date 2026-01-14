@@ -181,3 +181,75 @@ class FFmpegHelper:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=1200)
         
         return result.returncode == 0 and os.path.exists(output_path)
+    
+    @staticmethod
+    def split_video_720p(input_path: str, output_pattern: str, 
+                         segment_duration: int, total_duration: float) -> List[str]:
+        outputs = []
+        num_segments = int(total_duration // segment_duration)
+        last_segment_duration = total_duration - (num_segments * segment_duration)
+        
+        if last_segment_duration > 0.1:
+            num_segments += 1
+        
+        for i in range(num_segments):
+            start_time = i * segment_duration
+            output_file = output_pattern.format(index=i + 1)
+            
+            if i == num_segments - 1 and last_segment_duration > 0.1:
+                duration = last_segment_duration
+            else:
+                duration = segment_duration
+            
+            cmd = [
+                "ffmpeg",
+                "-y",
+                "-ss", str(start_time),
+                "-i", input_path,
+                "-t", str(duration),
+                "-vf", "scale=-2:720",
+                "-c:v", FFMPEG_VIDEO_CODEC,
+                "-preset", FFMPEG_PRESET,
+                "-crf", FFMPEG_CRF,
+                "-c:a", FFMPEG_AUDIO_CODEC,
+                "-b:a", "192k",
+                "-movflags", "+faststart",
+                output_file
+            ]
+            
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+            
+            if result.returncode == 0 and os.path.exists(output_file):
+                outputs.append(os.path.basename(output_file))
+        
+        return outputs
+    
+    @staticmethod
+    def merge_videos_720p(input_files: List[str], output_path: str, 
+                          temp_dir: str) -> bool:
+        concat_file = os.path.join(temp_dir, "concat_list.txt")
+        
+        with open(concat_file, "w") as f:
+            for file_path in input_files:
+                escaped_path = file_path.replace("'", "'\\''")
+                f.write(f"file '{escaped_path}'\n")
+        
+        cmd = [
+            "ffmpeg",
+            "-y",
+            "-f", "concat",
+            "-safe", "0",
+            "-i", concat_file,
+            "-vf", "scale=-2:720",
+            "-c:v", FFMPEG_VIDEO_CODEC,
+            "-preset", FFMPEG_PRESET,
+            "-crf", FFMPEG_CRF,
+            "-c:a", FFMPEG_AUDIO_CODEC,
+            "-b:a", "192k",
+            "-movflags", "+faststart",
+            output_path
+        ]
+        
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=1200)
+        
+        return result.returncode == 0 and os.path.exists(output_path)

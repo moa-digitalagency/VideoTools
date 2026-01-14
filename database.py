@@ -40,6 +40,7 @@ class JobModel(Base):
     outputs = Column(Text, nullable=True)  # JSON array
     output = Column(String(255), nullable=True)
     error = Column(Text, nullable=True)
+    convert_720 = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 

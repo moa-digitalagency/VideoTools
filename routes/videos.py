@@ -63,6 +63,7 @@ def split_video():
     data = request.get_json()
     video_id = data.get('videoId')
     segment_duration = data.get('segmentDuration')
+    convert_720 = data.get('convert720', False)
     
     if not video_id:
         return jsonify({"error": "videoId is required"}), 400
@@ -70,7 +71,7 @@ def split_video():
     if not segment_duration or not isinstance(segment_duration, int):
         return jsonify({"error": "segmentDuration must be a positive integer"}), 400
     
-    job, error = VideoService.split_video(video_id, segment_duration)
+    job, error = VideoService.split_video(video_id, segment_duration, convert_720)
     
     if error or not job:
         return jsonify({"error": error or "Split failed"}), 400
@@ -82,11 +83,12 @@ def split_video():
 def merge_videos():
     data = request.get_json()
     video_ids = data.get('videoIds')
+    convert_720 = data.get('convert720', False)
     
     if not video_ids or not isinstance(video_ids, list):
         return jsonify({"error": "videoIds must be a list"}), 400
     
-    job, error = VideoService.merge_videos(video_ids)
+    job, error = VideoService.merge_videos(video_ids, convert_720)
     
     if error or not job:
         return jsonify({"error": error or "Merge failed"}), 400

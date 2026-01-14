@@ -80,160 +80,161 @@
         <main class="flex-1 px-4 pb-24 overflow-y-auto">
             <div id="page-home" class="page active">
                 <div class="text-center mb-6">
+                    <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_qm8eqzse.json" background="transparent" speed="1" style="width: 120px; height: 120px; margin: 0 auto;" loop autoplay></lottie-player>
                     <h2 class="text-xl font-bold text-night-900 dark:text-white mb-2">Bienvenue sur VideoSplit</h2>
-                    <p class="text-night-500 dark:text-night-400 text-sm">Choisissez un service pour commencer</p>
+                    <p class="text-night-500 dark:text-night-400 text-sm mb-4">Votre outil de traitement vidéo tout-en-un</p>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-4">
-                    <button class="service-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 border border-night-200 dark:border-night-700 hover:border-primary dark:hover:border-primary hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 text-left" data-goto="upload" data-testid="service-upload">
-                        <div class="w-14 h-14 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 mb-4">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                            </svg>
+                <div class="card bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-4 mb-6 border border-night-200 dark:border-night-700">
+                    <h3 class="font-semibold text-night-900 dark:text-white mb-3 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Comment ça marche ?
+                    </h3>
+                    <div class="space-y-3 text-sm text-night-600 dark:text-night-300">
+                        <div class="flex items-start gap-2">
+                            <span class="w-6 h-6 bg-warning/20 text-warning rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                            <p><strong>Découper:</strong> Uploadez une vidéo et découpez-la en segments de durée identique (ex: 30 sec chacun)</p>
                         </div>
-                        <h3 class="font-semibold text-night-900 dark:text-white mb-1">Upload</h3>
-                        <p class="text-xs text-night-500 dark:text-night-400">Importer vos vidéos</p>
-                    </button>
-                    
-                    <button class="service-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 border border-night-200 dark:border-night-700 hover:border-warning dark:hover:border-warning hover:shadow-lg hover:shadow-warning/10 transition-all duration-300 text-left" data-goto="split" data-testid="service-split">
-                        <div class="w-14 h-14 bg-gradient-to-br from-warning to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-warning/20 mb-4">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-start gap-2">
+                            <span class="w-6 h-6 bg-success/20 text-success rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                            <p><strong>Fusionner:</strong> Uploadez plusieurs vidéos dans l'ordre souhaité et combinez-les en un seul fichier</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="w-6 h-6 bg-purple-500/20 text-purple-500 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                            <p><strong>Télécharger:</strong> Collez un lien TikTok, Instagram, Facebook ou YouTube et téléchargez la vidéo</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-amber-500/10 dark:bg-amber-500/20 rounded-lg border border-amber-500/30">
+                        <p class="text-xs text-amber-700 dark:text-amber-300 flex items-start gap-2">
+                            <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                            <span><strong>Note:</strong> Les fichiers sont automatiquement nettoyés à chaque rafraîchissement de la page pour libérer l'espace.</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-3">
+                    <button class="service-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-4 border border-night-200 dark:border-night-700 hover:border-warning dark:hover:border-warning hover:shadow-lg hover:shadow-warning/10 transition-all duration-300 text-center" data-goto="split" data-testid="service-split">
+                        <div class="w-12 h-12 mx-auto bg-gradient-to-br from-warning to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-warning/20 mb-3">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121"/>
                             </svg>
                         </div>
-                        <h3 class="font-semibold text-night-900 dark:text-white mb-1">Découper</h3>
-                        <p class="text-xs text-night-500 dark:text-night-400">Diviser en segments</p>
+                        <h3 class="font-semibold text-night-900 dark:text-white text-sm">Découper</h3>
                     </button>
                     
-                    <button class="service-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 border border-night-200 dark:border-night-700 hover:border-success dark:hover:border-success hover:shadow-lg hover:shadow-success/10 transition-all duration-300 text-left" data-goto="merge" data-testid="service-merge">
-                        <div class="w-14 h-14 bg-gradient-to-br from-success to-emerald-400 rounded-xl flex items-center justify-center shadow-lg shadow-success/20 mb-4">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button class="service-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-4 border border-night-200 dark:border-night-700 hover:border-success dark:hover:border-success hover:shadow-lg hover:shadow-success/10 transition-all duration-300 text-center" data-goto="merge" data-testid="service-merge">
+                        <div class="w-12 h-12 mx-auto bg-gradient-to-br from-success to-emerald-400 rounded-xl flex items-center justify-center shadow-lg shadow-success/20 mb-3">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                             </svg>
                         </div>
-                        <h3 class="font-semibold text-night-900 dark:text-white mb-1">Fusionner</h3>
-                        <p class="text-xs text-night-500 dark:text-night-400">Combiner des vidéos</p>
+                        <h3 class="font-semibold text-night-900 dark:text-white text-sm">Fusionner</h3>
                     </button>
                     
-                    <button class="service-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 border border-night-200 dark:border-night-700 hover:border-purple-500 dark:hover:border-purple-500 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300 text-left" data-goto="download" data-testid="service-download">
-                        <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 mb-4">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button class="service-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-4 border border-night-200 dark:border-night-700 hover:border-purple-500 dark:hover:border-purple-500 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300 text-center" data-goto="download" data-testid="service-download">
+                        <div class="w-12 h-12 mx-auto bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 mb-3">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                             </svg>
                         </div>
-                        <h3 class="font-semibold text-night-900 dark:text-white mb-1">Télécharger</h3>
-                        <p class="text-xs text-night-500 dark:text-night-400">TikTok, Insta, FB, YT</p>
+                        <h3 class="font-semibold text-night-900 dark:text-white text-sm">Télécharger</h3>
                     </button>
                 </div>
                 
-                <div class="mt-6 text-center">
-                    <button class="service-block inline-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl px-6 py-4 border border-night-200 dark:border-night-700 hover:border-purple-500 dark:hover:border-purple-500 hover:shadow-lg transition-all duration-300" data-goto="stats" data-testid="service-stats">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-500 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="mt-4 text-center">
+                    <button class="service-block inline-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-xl px-4 py-3 border border-night-200 dark:border-night-700 hover:border-violet-500 dark:hover:border-violet-500 hover:shadow-lg transition-all duration-300" data-goto="stats" data-testid="service-stats">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 bg-gradient-to-br from-violet-500 to-purple-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                                 </svg>
                             </div>
-                            <div class="text-left">
-                                <h3 class="font-semibold text-night-900 dark:text-white text-sm">Statistiques</h3>
-                                <p class="text-xs text-night-500 dark:text-night-400">Voir vos achievements</p>
-                            </div>
+                            <span class="font-medium text-night-900 dark:text-white text-sm">Statistiques</span>
                         </div>
                     </button>
-                </div>
-            </div>
-
-            <div id="page-upload" class="page hidden">
-                <div class="card bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 mb-4 border border-night-200 dark:border-night-700">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-12 h-12 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                            <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_1pxqjqps.json" background="transparent" speed="1" style="width: 32px; height: 32px;" loop autoplay></lottie-player>
-                        </div>
-                        <div>
-                            <h2 class="font-semibold text-night-900 dark:text-white">Upload Vidéo</h2>
-                            <p class="text-xs text-night-500 dark:text-night-400">Formats: MP4, MOV, AVI, MKV</p>
-                        </div>
-                    </div>
-                    
-                    <div id="upload-zone" class="upload-zone border-2 border-dashed border-primary/40 dark:border-primary/30 rounded-xl p-8 text-center cursor-pointer hover:border-primary hover:bg-primary/5 dark:hover:bg-primary/10 transition-all duration-300" data-testid="upload-zone">
-                        <input type="file" id="video-input" accept="video/*" class="hidden" data-testid="input-video-file">
-                        <div class="space-y-3">
-                            <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_uwR49r.json" background="transparent" speed="1" style="width: 80px; height: 80px; margin: 0 auto;" loop autoplay></lottie-player>
-                            <p class="text-night-700 dark:text-night-200 font-medium">Glissez votre vidéo ici</p>
-                            <p class="text-xs text-night-500 dark:text-night-400">ou cliquez pour sélectionner</p>
-                        </div>
-                    </div>
-                    
-                    <div id="upload-progress" class="hidden mt-4">
-                        <div class="flex justify-between text-sm mb-2">
-                            <span id="upload-filename" class="text-night-700 dark:text-night-300">video.mp4</span>
-                            <span id="upload-percent" class="text-primary font-semibold">0%</span>
-                        </div>
-                        <div class="h-2 bg-night-200 dark:bg-night-700 rounded-full overflow-hidden">
-                            <div id="upload-bar" class="h-full bg-gradient-to-r from-primary to-accent transition-all duration-300 rounded-full" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="videos-list" class="space-y-3">
-                    <h3 class="font-medium text-night-700 dark:text-night-300 flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                        </svg>
-                        Vidéos Uploadées
-                    </h3>
-                    <div id="videos-container"></div>
                 </div>
             </div>
 
             <div id="page-split" class="page hidden">
                 <div class="card bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 mb-4 border border-night-200 dark:border-night-700">
-                    <div class="flex items-center gap-3 mb-6">
+                    <div class="flex items-center gap-3 mb-4">
                         <div class="w-12 h-12 bg-gradient-to-br from-warning to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-warning/20">
                             <lottie-player src="https://assets10.lottiefiles.com/packages/lf20_yd8fbnml.json" background="transparent" speed="1" style="width: 32px; height: 32px;" loop autoplay></lottie-player>
                         </div>
                         <div>
                             <h2 class="font-semibold text-night-900 dark:text-white">Découper Vidéo</h2>
-                            <p class="text-xs text-night-500 dark:text-night-400">Segments de durée précise</p>
+                            <p class="text-xs text-night-500 dark:text-night-400">Diviser en segments de durée identique</p>
                         </div>
+                    </div>
+                    
+                    <div class="bg-night-100/50 dark:bg-night-700/20 rounded-lg p-3 mb-4 text-xs text-night-600 dark:text-night-400">
+                        <p>Uploadez une vidéo, choisissez la durée des segments, et obtenez plusieurs clips de durée identique. Idéal pour créer du contenu pour les réseaux sociaux.</p>
                     </div>
 
                     <div class="space-y-4">
-                        <div id="split-upload-zone" class="upload-zone border-2 border-dashed border-warning/40 rounded-xl p-4 text-center cursor-pointer hover:border-warning hover:bg-warning/5 dark:hover:bg-warning/10 transition-all duration-300 mb-4" data-testid="split-upload-zone">
+                        <div id="split-upload-zone" class="upload-zone border-2 border-dashed border-warning/40 rounded-xl p-6 text-center cursor-pointer hover:border-warning hover:bg-warning/5 dark:hover:bg-warning/10 transition-all duration-300" data-testid="split-upload-zone">
                             <input type="file" id="split-video-input" accept="video/*" class="hidden" data-testid="input-split-video">
-                            <div class="flex items-center justify-center gap-3">
-                                <div class="w-10 h-10 bg-warning/20 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                                    </svg>
-                                </div>
-                                <div class="text-left">
-                                    <p class="text-night-700 dark:text-night-200 font-medium text-sm">Uploader une vidéo à découper</p>
-                                    <p class="text-xs text-night-500 dark:text-night-400">ou sélectionnez ci-dessous</p>
-                                </div>
+                            <div class="space-y-2">
+                                <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_uwR49r.json" background="transparent" speed="1" style="width: 60px; height: 60px; margin: 0 auto;" loop autoplay></lottie-player>
+                                <p class="text-night-700 dark:text-night-200 font-medium">Glissez votre vidéo ici</p>
+                                <p class="text-xs text-night-500 dark:text-night-400">ou cliquez pour sélectionner</p>
+                            </div>
+                        </div>
+                        
+                        <div id="split-upload-progress" class="hidden">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span id="split-upload-filename" class="text-night-700 dark:text-night-300 truncate">video.mp4</span>
+                                <span id="split-upload-percent" class="text-warning font-semibold">0%</span>
+                            </div>
+                            <div class="h-2 bg-night-200 dark:bg-night-700 rounded-full overflow-hidden">
+                                <div id="split-upload-bar" class="h-full bg-gradient-to-r from-warning to-orange-500 transition-all duration-300 rounded-full" style="width: 0%"></div>
                             </div>
                         </div>
 
-                        <div>
-                            <label class="block text-sm text-night-600 dark:text-night-300 mb-2 font-medium">Sélectionner une vidéo uploadée</label>
-                            <select id="split-video-select" class="w-full bg-white dark:bg-night-700/50 border border-night-300 dark:border-night-600 rounded-xl px-4 py-3 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-night-900 dark:text-white" data-testid="select-split-video">
-                                <option value="">Choisir une vidéo...</option>
-                            </select>
-                        </div>
-
                         <div id="split-video-info" class="hidden bg-night-100 dark:bg-night-700/30 rounded-xl p-4">
-                            <div class="flex justify-between text-sm">
-                                <span class="text-night-600 dark:text-night-400">Durée totale:</span>
-                                <span id="split-duration" class="font-mono text-night-900 dark:text-white">00:00</span>
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 bg-warning/20 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p id="split-video-name" class="font-medium text-night-900 dark:text-white truncate text-sm">video.mp4</p>
+                                    <div class="flex items-center gap-2 text-xs text-night-500 dark:text-night-400">
+                                        <span>Durée: <span id="split-duration" class="font-mono">00:00</span></span>
+                                    </div>
+                                </div>
+                                <button id="btn-remove-split-video" class="text-red-400 hover:text-red-500 p-1" data-testid="button-remove-split-video">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-sm text-night-600 dark:text-night-300 mb-2 font-medium">Durée de chaque segment (secondes)</label>
                             <div class="flex items-center gap-3">
-                                <input type="number" id="segment-duration" value="10" min="1" max="3600" class="flex-1 bg-white dark:bg-night-700/50 border border-night-300 dark:border-night-600 rounded-xl px-4 py-3 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-mono text-lg transition-all text-night-900 dark:text-white" data-testid="input-segment-duration">
+                                <input type="number" id="segment-duration" value="30" min="1" max="3600" class="flex-1 bg-white dark:bg-night-700/50 border border-night-300 dark:border-night-600 rounded-xl px-4 py-3 focus:outline-none focus:border-warning focus:ring-2 focus:ring-warning/20 font-mono text-lg transition-all text-night-900 dark:text-white" data-testid="input-segment-duration">
                                 <span class="text-night-500 dark:text-night-400">sec</span>
                             </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-night-100 dark:bg-night-700/30 rounded-xl">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-night-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <span class="text-sm text-night-600 dark:text-night-300">Convertir en 720p</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="split-convert-720" class="sr-only peer" data-testid="toggle-split-720">
+                                <div class="w-11 h-6 bg-night-300 dark:bg-night-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-warning/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-night-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-warning"></div>
+                            </label>
                         </div>
 
                         <div id="split-preview" class="hidden bg-night-100 dark:bg-night-700/30 rounded-xl p-4">
@@ -260,27 +261,27 @@
 
             <div id="page-merge" class="page hidden">
                 <div class="card bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 mb-4 border border-night-200 dark:border-night-700">
-                    <div class="flex items-center gap-3 mb-6">
+                    <div class="flex items-center gap-3 mb-4">
                         <div class="w-12 h-12 bg-gradient-to-br from-success to-emerald-400 rounded-xl flex items-center justify-center shadow-lg shadow-success/20">
                             <lottie-player src="https://assets8.lottiefiles.com/packages/lf20_xyadoh9h.json" background="transparent" speed="1" style="width: 32px; height: 32px;" loop autoplay></lottie-player>
                         </div>
                         <div>
                             <h2 class="font-semibold text-night-900 dark:text-white">Fusionner Vidéos</h2>
-                            <p class="text-xs text-night-500 dark:text-night-400">Combiner plusieurs vidéos</p>
+                            <p class="text-xs text-night-500 dark:text-night-400">Combiner plusieurs vidéos en une seule</p>
                         </div>
+                    </div>
+                    
+                    <div class="bg-night-100/50 dark:bg-night-700/20 rounded-lg p-3 mb-4 text-xs text-night-600 dark:text-night-400">
+                        <p>Uploadez plusieurs vidéos dans l'ordre souhaité. L'ordre d'upload détermine l'ordre dans la vidéo finale. Vous pouvez réorganiser les vidéos avant la fusion.</p>
                     </div>
 
                     <div class="space-y-4">
                         <div id="merge-upload-zone" class="upload-zone border-2 border-dashed border-success/40 rounded-xl p-6 text-center cursor-pointer hover:border-success hover:bg-success/5 dark:hover:bg-success/10 transition-all duration-300" data-testid="merge-upload-zone">
                             <input type="file" id="merge-video-input" accept="video/*" multiple class="hidden" data-testid="input-merge-files">
                             <div class="space-y-2">
-                                <div class="w-14 h-14 mx-auto bg-success/20 rounded-full flex items-center justify-center">
-                                    <svg class="w-7 h-7 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                                    </svg>
-                                </div>
+                                <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_uwR49r.json" background="transparent" speed="1" style="width: 60px; height: 60px; margin: 0 auto;" loop autoplay></lottie-player>
                                 <p class="text-night-700 dark:text-night-200 font-medium">Ajouter des vidéos à fusionner</p>
-                                <p class="text-xs text-night-500 dark:text-night-400">Sélection multiple possible</p>
+                                <p class="text-xs text-night-500 dark:text-night-400">Sélection multiple possible - ordre d'upload = ordre de fusion</p>
                             </div>
                         </div>
 
@@ -295,6 +296,19 @@
                                 <span class="text-night-600 dark:text-night-400">Durée totale estimée:</span>
                                 <span id="merge-total-duration" class="font-mono text-night-900 dark:text-white">00:00</span>
                             </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-night-100 dark:bg-night-700/30 rounded-xl">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-night-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <span class="text-sm text-night-600 dark:text-night-300">Convertir en 720p</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="merge-convert-720" class="sr-only peer" data-testid="toggle-merge-720">
+                                <div class="w-11 h-6 bg-night-300 dark:bg-night-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-success/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-night-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-success"></div>
+                            </label>
                         </div>
 
                         <button id="btn-merge" class="btn-primary w-full bg-gradient-to-r from-success to-emerald-400 text-white font-semibold py-4 rounded-xl hover:shadow-lg hover:shadow-success/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none" disabled data-testid="button-merge">
@@ -313,7 +327,7 @@
 
             <div id="page-download" class="page hidden">
                 <div class="card bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 mb-4 border border-night-200 dark:border-night-700">
-                    <div class="flex items-center gap-3 mb-6">
+                    <div class="flex items-center gap-3 mb-4">
                         <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
@@ -323,6 +337,10 @@
                             <h2 class="font-semibold text-night-900 dark:text-white">Social Video Downloader</h2>
                             <p class="text-xs text-night-500 dark:text-night-400">TikTok, Instagram, Facebook, YouTube</p>
                         </div>
+                    </div>
+                    
+                    <div class="bg-night-100/50 dark:bg-night-700/20 rounded-lg p-3 mb-4 text-xs text-night-600 dark:text-night-400">
+                        <p>Collez l'URL d'une vidéo et téléchargez-la. Le titre original de la vidéo sera utilisé comme nom de fichier. Les fichiers téléchargés sont supprimés au rafraîchissement de la page.</p>
                     </div>
 
                     <div class="grid grid-cols-4 gap-2 mb-4">

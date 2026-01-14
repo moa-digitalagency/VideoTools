@@ -2,13 +2,19 @@
 
 ## Overview
 
-VideoSplit is a mobile-first web application for splitting and merging video files. Users can upload videos, split them into segments of configurable duration (exactly N seconds each), merge multiple videos into one seamless file, and download TikTok videos. The app features a gamification layer with achievements and statistics tracking.
+VideoSplit is a mobile-first web application for splitting and merging video files. Users can:
+- **Split videos** directly on the Split page (no separate upload page) with optional 720p conversion
+- **Merge videos** directly on the Merge page with optional 720p conversion
+- **Download videos** from TikTok, Instagram, Facebook, and YouTube by URL
+- View statistics and achievements
+
+The app features a night blue color theme with light/dark mode toggle, Lottie animations, explanatory text on all pages, and automatic database and file cleanup on page refresh.
 
 ## Architecture
 
-**Frontend**: Pure HTML/CSS/Tailwind/JavaScript
+**Frontend**: Pure HTML/CSS/Tailwind/JavaScript (NO React/TypeScript)
 - Located in `templates/` directory
-- `templates/index.html` - Main HTML page
+- `templates/index.html` - Main HTML page with night blue theme and Lottie animations
 - `templates/css/style.css` - Custom CSS styles
 - `templates/js/app.js` - All JavaScript logic
 
@@ -18,7 +24,7 @@ VideoSplit is a mobile-first web application for splitting and merging video fil
 - `main.py` - Entry point
 - `models/` - Data models (Video, Job, Stats)
 - `routes/` - API route handlers
-- `services/` - Business logic (VideoService, TikTokService)
+- `services/` - Business logic (VideoService, SocialService)
 - `utils/` - Utilities (FFmpeg, FileHandler)
 - `security/` - Validation and security
 

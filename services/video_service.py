@@ -113,7 +113,7 @@ class VideoService:
             db.close()
     
     @staticmethod
-    def split_video(video_id: str, segment_duration: int) -> Tuple[Optional[dict], Optional[str]]:
+    def split_video(video_id: str, segment_duration: int, convert_720: bool = False) -> Tuple[Optional[dict], Optional[str]]:
         db = VideoService.get_db()
         try:
             video = db.query(VideoModel).filter(VideoModel.id == video_id).first()
@@ -132,7 +132,8 @@ class VideoService:
                 type='split',
                 status='pending',
                 video_id=video_id,
-                segment_duration=segment_duration
+                segment_duration=segment_duration,
+                convert_720=convert_720
             )
             db.add(job)
             db.commit()
@@ -167,12 +168,20 @@ class VideoService:
             ext = FileHandler.get_extension(video.original_name) or "mp4"
             output_pattern = os.path.join(OUTPUT_DIR, f"split_{job.id}_segment_{{index}}.{ext}")
             
-            outputs = FFmpegHelper.split_video_lossless(
-                video.path,
-                output_pattern,
-                job.segment_duration,
-                video.duration
-            )
+            if job.convert_720:
+                outputs = FFmpegHelper.split_video_720p(
+                    video.path,
+                    output_pattern,
+                    job.segment_duration,
+                    video.duration
+                )
+            else:
+                outputs = FFmpegHelper.split_video_lossless(
+                    video.path,
+                    output_pattern,
+                    job.segment_duration,
+                    video.duration
+                )
             
             if not outputs:
                 job.status = 'error'
@@ -200,7 +209,7 @@ class VideoService:
             db.close()
     
     @staticmethod
-    def merge_videos(video_ids: List[str]) -> Tuple[Optional[dict], Optional[str]]:
+    def merge_videos(video_ids: List[str], convert_720: bool = False) -> Tuple[Optional[dict], Optional[str]]:
         if len(video_ids) < 2:
             return None, "Need at least 2 videos to merge"
         
@@ -216,7 +225,8 @@ class VideoService:
                 id=job_id,
                 type='merge',
                 status='pending',
-                video_ids=json.dumps(video_ids)
+                video_ids=json.dumps(video_ids),
+                convert_720=convert_720
             )
             db.add(job)
             db.commit()
@@ -261,7 +271,10 @@ class VideoService:
             output_filename = f"merged_{job.id}.mp4"
             output_path = os.path.join(OUTPUT_DIR, output_filename)
             
-            success = FFmpegHelper.merge_videos_lossless(input_files, output_path, temp_dir)
+            if job.convert_720:
+                success = FFmpegHelper.merge_videos_720p(input_files, output_path, temp_dir)
+            else:
+                success = FFmpegHelper.merge_videos_lossless(input_files, output_path, temp_dir)
             
             if not success:
                 job.status = 'error'

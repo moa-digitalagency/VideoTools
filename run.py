@@ -2,11 +2,11 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(__file__))
-os.chdir(os.path.dirname(__file__) or '.')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from server.app import app
+from server import app
 
 if __name__ == "__main__":
-    print("Starting VideoSplit Flask server on port 5000...")
-    app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
+    port = int(os.environ.get("PORT", 5000))
+    print(f"Starting VideoSplit Flask server on port {port}...")
+    app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)

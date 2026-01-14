@@ -1,1 +1,1 @@
-{"name":"videosplit","version":"1.0.0","scripts":{"dev":"python server/app.py"}}
+{"name":"videosplit","version":"1.0.0","scripts":{"dev":"python run.py"}}

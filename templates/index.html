@@ -60,21 +60,7 @@
 </head>
 <body class="font-sans transition-colors duration-300 bg-night-100 dark:bg-gradient-to-br dark:from-night-950 dark:via-night-900 dark:to-night-800 min-h-screen text-night-800 dark:text-white">
     <div id="app" class="flex flex-col min-h-screen">
-        <header class="p-4 flex items-center justify-between">
-            <div class="text-center flex-1">
-                <h1 class="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                    VideoSplit
-                </h1>
-                <p class="text-sm text-night-500 dark:text-night-300 mt-1">Découpe & Fusion Vidéo + TikTok</p>
-            </div>
-            <button id="theme-toggle" class="p-2 rounded-xl bg-night-200/50 dark:bg-night-700/50 hover:bg-night-300/50 dark:hover:bg-night-600/50 transition-all" data-testid="button-theme-toggle">
-                <svg id="theme-icon-light" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-                </svg>
-                <svg id="theme-icon-dark" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-                </svg>
-            </button>
+        <header class="p-4">
         </header>
 
         <main class="flex-1 px-4 pb-24 overflow-y-auto">
@@ -145,7 +131,7 @@
                     </button>
                 </div>
                 
-                <div class="mt-4 text-center">
+                <div class="mt-4 flex justify-center gap-3">
                     <button class="service-block inline-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-xl px-4 py-3 border border-night-200 dark:border-night-700 hover:border-violet-500 dark:hover:border-violet-500 hover:shadow-lg transition-all duration-300" data-goto="stats" data-testid="service-stats">
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-8 bg-gradient-to-br from-violet-500 to-purple-500 rounded-lg flex items-center justify-center">
@@ -154,6 +140,19 @@
                                 </svg>
                             </div>
                             <span class="font-medium text-night-900 dark:text-white text-sm">Statistiques</span>
+                        </div>
+                    </button>
+                    <button id="theme-toggle" class="bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-xl px-4 py-3 border border-night-200 dark:border-night-700 hover:border-primary dark:hover:border-primary hover:shadow-lg transition-all duration-300" data-testid="button-theme-toggle">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
+                                <svg id="theme-icon-light" class="w-4 h-4 text-white hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                </svg>
+                                <svg id="theme-icon-dark" class="w-4 h-4 text-white block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                                </svg>
+                            </div>
+                            <span class="font-medium text-night-900 dark:text-white text-sm">Thème</span>
                         </div>
                     </button>
                 </div>

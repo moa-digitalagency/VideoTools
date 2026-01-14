@@ -2,8 +2,8 @@ import os
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 
-from .config import TEMPLATES_DIR
-from .routes import videos_bp, jobs_bp, stats_bp
+from config import TEMPLATES_DIR
+from routes import videos_bp, jobs_bp, stats_bp
 
 
 def create_app():

@@ -3,7 +3,7 @@ import shutil
 import uuid
 from werkzeug.utils import secure_filename
 from typing import Optional, Tuple
-from ..config import UPLOAD_DIR, OUTPUT_DIR, ALLOWED_EXTENSIONS, MAX_FILE_SIZE
+from config import UPLOAD_DIR, OUTPUT_DIR, ALLOWED_EXTENSIONS, MAX_FILE_SIZE
 
 
 class FileHandler:

@@ -3,11 +3,11 @@ import uuid
 from threading import Thread
 from typing import List, Optional, Tuple
 
-from ..models import Video, videos_store, Job, jobs_store, stats_store
-from ..models.job import JobStatus, JobType
-from ..utils import FFmpegHelper, FileHandler
-from ..security import FileValidator
-from ..config import OUTPUT_DIR
+from models import Video, videos_store, Job, jobs_store, stats_store
+from models.job import JobStatus, JobType
+from utils import FFmpegHelper, FileHandler
+from security import FileValidator
+from config import OUTPUT_DIR
 
 
 class VideoService:

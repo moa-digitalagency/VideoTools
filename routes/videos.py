@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify, send_file
 import os
 
-from ..services import VideoService
-from ..config import OUTPUT_DIR
+from services import VideoService
+from config import OUTPUT_DIR
 
 videos_bp = Blueprint('videos', __name__)
 

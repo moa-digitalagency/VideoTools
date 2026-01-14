@@ -1,9 +1,9 @@
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 OUTPUT_DIR = os.path.join(BASE_DIR, "outputs")
-TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), "templates")
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
 ALLOWED_EXTENSIONS = {'mp4', 'mov', 'avi', 'mkv', 'webm', 'flv', 'wmv', 'm4v'}
 MAX_FILE_SIZE = 500 * 1024 * 1024  # 500MB

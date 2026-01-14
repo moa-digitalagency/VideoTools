@@ -1,7 +1,7 @@
 import os
 import subprocess
 from typing import Tuple, Optional
-from ..config import ALLOWED_EXTENSIONS, MAX_FILE_SIZE
+from config import ALLOWED_EXTENSIONS, MAX_FILE_SIZE
 
 
 class FileValidator:

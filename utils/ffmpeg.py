@@ -2,7 +2,7 @@ import subprocess
 import json
 import os
 from typing import Optional, Dict, List, Tuple
-from ..config import FFMPEG_VIDEO_CODEC, FFMPEG_AUDIO_CODEC, FFMPEG_PRESET, FFMPEG_CRF
+from config import FFMPEG_VIDEO_CODEC, FFMPEG_AUDIO_CODEC, FFMPEG_PRESET, FFMPEG_CRF
 
 
 class FFmpegHelper:

@@ -7,19 +7,20 @@ VideoSplit is a mobile-first web application for splitting and merging video fil
 ## Architecture
 
 **Frontend**: Pure HTML/CSS/Tailwind/JavaScript
-- Located in `server/templates/` directory
-- `server/templates/index.html` - Main HTML page
-- `server/templates/css/style.css` - Custom CSS styles
-- `server/templates/js/app.js` - All JavaScript logic
+- Located in `templates/` directory
+- `templates/index.html` - Main HTML page
+- `templates/css/style.css` - Custom CSS styles
+- `templates/js/app.js` - All JavaScript logic
 
-**Backend**: Python Flask with modular architecture
-- `server/app.py` - Flask application factory
-- `server/config.py` - Configuration settings
-- `server/models/` - Data models (Video, Job, Stats)
-- `server/routes/` - API route handlers
-- `server/services/` - Business logic (VideoService)
-- `server/utils/` - Utilities (FFmpeg, FileHandler)
-- `server/security/` - Validation and security
+**Backend**: Python Flask with modular architecture (flat structure at root)
+- `app.py` - Flask application factory
+- `config.py` - Configuration settings
+- `run.py` - Entry point
+- `models/` - Data models (Video, Job, Stats)
+- `routes/` - API route handlers
+- `services/` - Business logic (VideoService)
+- `utils/` - Utilities (FFmpeg, FileHandler)
+- `security/` - Validation and security
 
 ## User Preferences
 
@@ -28,10 +29,10 @@ Preferred communication style: Simple, everyday language.
 ## Project Structure
 
 ```
-server/
+/
 ├── app.py              # Flask app factory
 ├── config.py           # Configuration
-├── __init__.py         # Package init
+├── run.py              # Entry point
 ├── models/
 │   ├── __init__.py
 │   ├── video.py        # Video data model
@@ -52,10 +53,12 @@ server/
 ├── security/
 │   ├── __init__.py
 │   └── validator.py    # Input validation
-└── templates/
-    ├── index.html      # Main page
-    ├── css/style.css   # Styles
-    └── js/app.js       # JavaScript
+├── templates/
+│   ├── index.html      # Main page
+│   ├── css/style.css   # Styles
+│   └── js/app.js       # JavaScript
+├── uploads/            # Uploaded video files
+└── outputs/            # Processed video files
 ```
 
 ## API Endpoints

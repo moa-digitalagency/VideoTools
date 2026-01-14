@@ -338,5 +338,6 @@ def process_merge_job(job_id, video_list):
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("FLASK_PORT", 5001))
+    port = int(os.environ.get("PORT", 5000))
+    print(f"Starting VideoSplit Flask server on port {port}...")
     app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)

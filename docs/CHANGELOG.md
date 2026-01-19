@@ -1,57 +1,60 @@
-# Historique des versions
+# Historique des modifications
 
-## Version actuelle
+## Janvier 2026
 
-### Janvier 2026
+### Nouvelles fonctionnalites
 
-**Nouvelles fonctionnalites**
-- Extraction de frames : capture de la premiere et derniere image d'une video
-- Support Vimeo ajoute au telechargement social (10 plateformes au total)
-- Onglet Frames dans la navigation principale (Stats accessible via API uniquement)
+**Extraction de frames** - Nouvelle section permettant d'extraire la premiere et la derniere image d'une video. Les fichiers sont exportes en JPEG. L'endpoint POST /api/videos/extract-frames gere l'upload, l'extraction et la suppression automatique du fichier source.
 
-**Ameliorations techniques**
-- Decoupe video frame-accurate a 30 fps pour fusion sans saut
-- Reencodage systematique pour garantir les limites exactes des segments
-- Force des keyframes toutes les secondes
-- Generation de PTS pour synchronisation audio/video
+**Support Vimeo** - Dixieme plateforme ajoutee au telechargement social. Les URLs vimeo.com/ sont desormais reconnues et traitees.
 
-**Corrections**
+**Decoupe frame-accurate** - Refonte complete de l'algorithme de decoupe. Abandon du stream copy au profit d'un reencodage systematique a 30 fps. Les segments produits peuvent etre refusionnes sans perte de frame ni duplication.
+
+### Modifications techniques
+
+- Parametres FFmpeg pour la decoupe : ajout de -force_key_frames, -fflags +genpts, -r 30, -g 30, -avoid_negative_ts make_zero
+- Suppression des frames et fichiers sociaux apres telechargement (nettoyage automatique dans /api/download/)
+- Prefixes de fichiers pour le nettoyage : tiktok_, instagram_, facebook_, youtube_, twitter_, snapchat_, threads_, linkedin_, pinterest_, vimeo_, frame_
+
+### Corrections
+
+- Message d'erreur pour URL non supportee mis a jour pour lister les 10 plateformes
 - Validation des fichiers avant extraction de frames
-- Nettoyage des frames apres telechargement
-- Message d'erreur incluant toutes les plateformes supportees
+- Gestion des caracteres speciaux dans les titres de telechargement
 
-**Renommage**
+### Documentation
+
+- Ajout des messages d'erreur exacts pour /api/videos/split et /api/videos/merge dans API.md
+- Clarification du comportement optionnel de PostgreSQL (DATABASE_URL) dans README et ARCHITECTURE
+- Description precise du nettoyage automatique par prefixes dans /api/download
+- Documentation de l'alias SocialVideoService pour SocialMediaService
+- Correction des sections dupliquees dans ARCHITECTURE.md
+
+### Renommage
+
 - Application renommee de VideoSplit a ClipFlow
+- Titre de la page, texte d'accueil et documentation mis a jour
 
 ---
 
-## Versions precedentes
+## Decembre 2025
 
-### Decembre 2025
+### Version initiale
 
-**Fonctionnalites initiales**
-- Decoupe video en segments de duree egale
-- Fusion de plusieurs videos
-- Telechargement depuis 9 plateformes sociales
-- Conversion 720p optionnelle
-- Interface mobile-first avec mode sombre
-- Statistiques et achievements
-- Nettoyage automatique au rafraichissement
+**Decoupe video** - Upload d'une video, choix de la duree des segments, production de N fichiers. Option de conversion 720p.
 
-**Plateformes sociales supportees**
-- TikTok
-- Instagram (posts, reels, stories, IGTV)
-- Facebook (videos, reels, stories, photos)
-- YouTube (videos, shorts)
-- Twitter/X
-- Snapchat (spotlight)
-- Threads
-- LinkedIn
-- Pinterest
+**Fusion video** - Upload de plusieurs videos, assemblage dans l'ordre d'upload. Option de conversion 720p.
 
-**Stack technique**
-- Frontend : HTML, Tailwind CSS, JavaScript vanilla
-- Backend : Python Flask
+**Telechargement social** - Support de 9 plateformes : TikTok, Instagram, Facebook, YouTube, Twitter/X, Snapchat, Threads, LinkedIn, Pinterest. Detection automatique de la plateforme via l'URL. Option de conversion 720p.
+
+**Interface utilisateur** - Design mobile-first avec theme bleu nuit. Mode sombre et mode clair. Animations Lottie. Barre de navigation en bas de l'ecran.
+
+**Infrastructure** - Backend Flask avec PostgreSQL. Traitement asynchrone des operations longues. Nettoyage automatique au chargement de la page.
+
+### Stack technique
+
+- Frontend : HTML, Tailwind CSS (CDN), JavaScript vanilla
+- Backend : Python Flask, SQLAlchemy
 - Base de donnees : PostgreSQL
 - Traitement video : FFmpeg
 - Telechargement social : yt-dlp

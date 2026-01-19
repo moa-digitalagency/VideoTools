@@ -1,67 +1,67 @@
 # ClipFlow
 
-Application web mobile-first de traitement de contenus multimédias. ClipFlow permet de découper des vidéos en segments, fusionner plusieurs vidéos, extraire des images (frames) et télécharger des contenus depuis les principales plateformes sociales.
+ClipFlow est une application web de traitement de contenus multimedias. Elle tourne sur mobile comme sur ordinateur. Quatre fonctions principales : decouper des videos en morceaux, fusionner plusieurs videos, telecharger depuis les reseaux sociaux, extraire des images fixes.
 
-## Fonctionnalités principales
+## Ce que fait l'application
 
-**Découpe vidéo**
-- Division d'une vidéo en segments de durée égale
-- Précision à l'image près (30 fps) pour des transitions fluides
-- Option de conversion en 720p
+**Decoupe video** - Vous avez une video de 10 minutes et vous voulez la poster sur TikTok qui accepte 60 secondes max ? Uploadez-la, indiquez 60 secondes, et recuperez vos 10 segments. La decoupe respecte les limites exactes des images (frames) pour eviter les sauts ou les doublons quand vous refusionnez.
 
-**Fusion vidéo**
-- Assemblage de plusieurs vidéos en un seul fichier
-- Fusion sans perte avec repli automatique sur réencodage si nécessaire
-- Option de conversion en 720p
+**Fusion video** - Prenez 5 clips et combinez-les en un seul fichier. L'ordre de fusion correspond a l'ordre d'upload.
 
-**Extraction de frames**
-- Capture de la première et dernière image d'une vidéo
-- Export en JPEG haute qualité
-- Utile pour créer des miniatures ou vérifier le contenu
+**Telechargement social** - Collez une URL TikTok, Instagram, Facebook, YouTube, Twitter/X, Snapchat, Threads, LinkedIn, Pinterest ou Vimeo. L'application recupere la video ou l'image et vous la propose au telechargement.
 
-**Téléchargement depuis les réseaux sociaux**
-- 10 plateformes supportées : TikTok, Instagram, Facebook, YouTube, Twitter/X, Snapchat, Threads, LinkedIn, Pinterest, Vimeo
-- Support des images et vidéos
-- Option de conversion en 720p pour les vidéos
+**Extraction de frames** - Uploadez une video, recuperez sa premiere et sa derniere image en JPEG. Pratique pour creer des miniatures.
 
-## Démarrage rapide
+## Demarrer
 
-1. Accéder à l'application via le navigateur
-2. Choisir une fonctionnalité depuis l'écran d'accueil
-3. Uploader un fichier ou coller une URL
-4. Lancer le traitement
-5. Télécharger le résultat
+L'application tourne sur Flask. Au chargement de la page, elle appelle automatiquement /api/cleanup qui supprime les fichiers temporaires dans uploads/ et outputs/. Si PostgreSQL est configure (DATABASE_URL), les tables videos, jobs et tiktok_downloads sont aussi videes. Les stats sont conservees.
 
-## Configuration requise
-
-- Python 3.11+
-- FFmpeg (installé via Nix)
-- PostgreSQL (base de données Replit)
-- yt-dlp (pour les téléchargements sociaux)
-
-## Structure du projet
-
-```
-ClipFlow/
-├── main.py              # Point d'entrée
-├── app.py               # Factory Flask
-├── config.py            # Configuration
-├── database.py          # Modèles SQLAlchemy
-├── models/              # Définitions de données
-├── routes/              # Endpoints API
-├── services/            # Logique métier
-├── utils/               # Utilitaires (FFmpeg, fichiers)
-├── security/            # Validation et sécurité
-├── templates/           # Interface utilisateur
-└── docs/                # Documentation
+```bash
+python main.py
 ```
 
-## Limites techniques
+Le serveur ecoute sur le port 5000.
 
-- Taille maximale des fichiers : 500 Mo
-- Formats supportés : MP4, MOV, AVI, MKV, WebM, FLV, WMV, M4V
-- Nettoyage automatique des fichiers à chaque rafraîchissement de page
+## Contraintes techniques
 
-## Licence
+- Fichiers de 500 Mo maximum
+- Formats acceptes : MP4, MOV, AVI, MKV, WebM, FLV, WMV, M4V
+- Tous les fichiers sont supprimes au rafraichissement de la page
+- PostgreSQL optionnel mais recommande (variable DATABASE_URL) pour la persistance des metadonnees
 
-Projet privé - Tous droits réservés
+## Organisation du code
+
+```
+main.py              Point d'entree
+app.py               Creation de l'application Flask
+config.py            Chemins, limites, parametres FFmpeg
+database.py          Modeles SQLAlchemy et fonctions de base
+
+routes/              Endpoints HTTP
+  videos.py          Upload, split, merge, frames, download
+  jobs.py            Liste des taches en cours
+  stats.py           Compteurs d'utilisation
+  tiktok.py          Telechargement depuis les reseaux sociaux
+  cleanup.py         Remise a zero
+
+services/            Logique metier
+  video_service.py   Traitement video (split, merge, frames)
+  social_service.py  Telechargement yt-dlp
+
+utils/               Outils
+  ffmpeg.py          Appels FFmpeg/FFprobe
+  file_handler.py    Gestion des fichiers sur disque
+
+security/            Validation
+  validator.py       Verification des extensions, tailles, contenus
+
+templates/           Interface utilisateur
+  index.html         Page HTML unique
+  css/style.css      Styles
+  js/app.js          JavaScript client
+```
+
+## Dependances
+
+Python : flask, flask-cors, sqlalchemy, werkzeug, yt-dlp
+Systeme : ffmpeg (installe via Nix)

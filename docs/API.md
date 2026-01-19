@@ -1,256 +1,231 @@
-# Documentation API
+# Reference API
 
-## Base URL
+Base : toutes les routes commencent par /api.
 
-Toutes les routes API sont préfixées par `/api`.
+## Videos
 
-## Vidéos
+### GET /api/videos
 
-### Lister les vidéos
+Liste les videos uploadees (hors fichiers temporaires).
 
-```
-GET /api/videos
-```
-
-Retourne la liste des vidéos uploadées (non temporaires).
-
-**Réponse**
+Reponse :
 ```json
 [
   {
-    "id": "uuid",
-    "filename": "nom_fichier.mp4",
-    "originalName": "nom_original.mp4",
-    "size": 12345678,
-    "duration": 120.5,
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "filename": "abc12345_ma_video.mp4",
+    "originalName": "ma_video.mp4",
+    "size": 15728640,
+    "duration": 125.4,
     "codec": "h264",
     "resolution": "1920x1080",
-    "bitrate": 5000000
+    "bitrate": 8500000
   }
 ]
 ```
 
-### Uploader une vidéo
+### POST /api/videos/upload
 
-```
-POST /api/videos/upload
-Content-Type: multipart/form-data
-```
+Upload un fichier video.
 
-**Paramètres**
-- `video` (file) : fichier vidéo à uploader
+Corps : multipart/form-data avec un champ "video" contenant le fichier.
 
-**Réponse**
+Reponse succes :
 ```json
 {
-  "id": "uuid",
-  "filename": "nom_fichier.mp4",
-  "originalName": "nom_original.mp4",
-  "size": 12345678,
-  "duration": 120.5,
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "filename": "abc12345_ma_video.mp4",
+  "originalName": "ma_video.mp4",
+  "size": 15728640,
+  "duration": 125.4,
   "codec": "h264",
   "resolution": "1920x1080",
-  "bitrate": 5000000
+  "bitrate": 8500000
 }
 ```
 
-**Erreurs**
-- 400 : fichier manquant, extension non autorisée, fichier trop volumineux, fichier invalide
+Erreurs possibles :
+- 400 "No video file provided" : pas de fichier dans la requete
+- 400 "No file selected" : fichier vide
+- 400 "Extension .xyz not allowed" : format non supporte
+- 400 "File too large" : depasse 500 Mo
+- 400 "Invalid video file" : FFprobe ne trouve pas de flux video
 
-### Supprimer une vidéo
+### DELETE /api/videos/{id}
 
-```
-DELETE /api/videos/{video_id}
-```
+Supprime une video uploadee.
 
-**Réponse**
+Reponse : `{"success": true}` ou 404 si introuvable.
+
+### GET /api/videos/{id}/download
+
+Telecharge le fichier video original.
+
+### POST /api/videos/split
+
+Lance une decoupe video.
+
+Corps :
 ```json
 {
-  "success": true
-}
-```
-
-### Télécharger une vidéo
-
-```
-GET /api/videos/{video_id}/download
-```
-
-Retourne le fichier vidéo en téléchargement.
-
-### Découper une vidéo
-
-```
-POST /api/videos/split
-Content-Type: application/json
-```
-
-**Corps**
-```json
-{
-  "videoId": "uuid",
+  "videoId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "segmentDuration": 30,
   "convert720": false
 }
 ```
 
-**Paramètres**
-- `videoId` (string) : identifiant de la vidéo
-- `segmentDuration` (integer) : durée en secondes de chaque segment
-- `convert720` (boolean, optionnel) : convertir en 720p
+- videoId : identifiant de la video uploadee
+- segmentDuration : duree de chaque segment en secondes (entier positif, minimum 1)
+- convert720 : optionnel, redimensionne en 720p si true
 
-**Réponse**
+Reponse :
 ```json
 {
-  "jobId": "uuid",
-  "id": "uuid",
+  "jobId": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+  "id": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
   "type": "split",
   "status": "pending"
 }
 ```
 
-### Fusionner des vidéos
+Erreurs possibles :
+- 400 `{"error": "videoId is required"}` : parametre videoId absent
+- 400 `{"error": "segmentDuration must be a positive integer"}` : segmentDuration absent ou non entier
+- 400 `{"error": "Video not found"}` : videoId ne correspond a aucune video
+- 400 `{"error": "Segment duration must be at least 1 second"}` : duree trop courte
+- 400 `{"error": "Segment duration exceeds video length"}` : duree depasse la video
 
-```
-POST /api/videos/merge
-Content-Type: application/json
-```
+Le traitement se fait en arriere-plan. Interrogez /api/jobs pour suivre l'avancement.
 
-**Corps**
+### POST /api/videos/merge
+
+Lance une fusion video.
+
+Corps :
 ```json
 {
-  "videoIds": ["uuid1", "uuid2", "uuid3"],
+  "videoIds": [
+    "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+    "c3d4e5f6-a7b8-9012-cdef-345678901234"
+  ],
   "convert720": false
 }
 ```
 
-**Paramètres**
-- `videoIds` (array) : liste ordonnée des identifiants de vidéos (minimum 2)
-- `convert720` (boolean, optionnel) : convertir en 720p
+- videoIds : liste ordonnee des identifiants (minimum 2)
+- convert720 : optionnel, redimensionne en 720p si true
 
-**Réponse**
+Reponse : meme format que split.
+
+Erreurs possibles :
+- 400 `{"error": "videoIds must be a list"}` : parametre videoIds absent ou mal forme
+- 400 `{"error": "Need at least 2 videos to merge"}` : moins de 2 videos
+- 400 `{"error": "Video {id} not found"}` : une video n'existe pas
+
+### POST /api/videos/extract-frames
+
+Extrait la premiere et derniere image d'une video.
+
+Corps : multipart/form-data avec un champ "video" contenant le fichier.
+
+Reponse :
 ```json
 {
-  "jobId": "uuid",
-  "id": "uuid",
-  "type": "merge",
-  "status": "pending"
+  "firstFrame": "frame_abc12345_first.jpg",
+  "lastFrame": "frame_abc12345_last.jpg",
+  "duration": 125.4
 }
 ```
 
-### Extraire les frames
+### GET /api/download/{filename}
 
-```
-POST /api/videos/extract-frames
-Content-Type: multipart/form-data
-```
+Telecharge un fichier de sortie (segment, fichier fusionne, telechargement social, frame).
 
-**Paramètres**
-- `video` (file) : fichier vidéo
-
-**Réponse**
-```json
-{
-  "firstFrame": "frame_abc123_first.jpg",
-  "lastFrame": "frame_abc123_last.jpg",
-  "duration": 120.5
-}
-```
-
-### Télécharger un fichier de sortie
-
-```
-GET /api/download/{filename}
-```
-
-Télécharge un fichier depuis le répertoire outputs (segments, fichiers fusionnés, téléchargements sociaux, frames).
+Les fichiers sont automatiquement supprimes apres telechargement si leur nom contient l'un de ces prefixes : tiktok_, instagram_, facebook_, youtube_, twitter_, snapchat_, threads_, linkedin_, pinterest_, vimeo_, frame_. Les segments de decoupe et fichiers de fusion ne sont pas supprimes automatiquement.
 
 ## Jobs
 
-### Lister les jobs
+### GET /api/jobs
 
-```
-GET /api/jobs
-```
+Liste toutes les taches de traitement.
 
-Retourne la liste des jobs de traitement.
-
-**Réponse**
+Reponse :
 ```json
 [
   {
-    "id": "uuid",
+    "id": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
     "type": "split",
     "status": "completed",
     "progress": 100,
-    "outputs": ["segment_1.mp4", "segment_2.mp4"],
+    "outputs": ["split_xyz_segment_1.mp4", "split_xyz_segment_2.mp4"],
+    "output": null,
+    "error": null
+  },
+  {
+    "id": "c3d4e5f6-a7b8-9012-cdef-345678901234",
+    "type": "merge",
+    "status": "processing",
+    "progress": 45,
+    "outputs": null,
     "output": null,
     "error": null
   }
 ]
 ```
 
-**Statuts possibles**
-- `pending` : en attente de traitement
-- `processing` : en cours de traitement
-- `completed` : terminé avec succès
-- `error` : échec (voir champ error)
+Statuts :
+- pending : en attente
+- processing : en cours
+- completed : termine
+- error : echec (voir champ error)
+
+Pour un job split, outputs contient la liste des noms de fichiers.
+Pour un job merge, output contient le nom du fichier fusionne.
 
 ## Statistiques
 
-### Obtenir les statistiques
+### GET /api/stats
 
-```
-GET /api/stats
-```
+Retourne les compteurs d'utilisation.
 
-**Réponse**
+Reponse :
 ```json
 {
-  "totalVideosSplit": 15,
-  "totalSegmentsCreated": 45,
-  "totalVideosMerged": 8,
-  "totalTimeSaved": 3600.5,
-  "totalTikTokDownloads": 23
+  "totalVideosSplit": 42,
+  "totalSegmentsCreated": 156,
+  "totalVideosMerged": 18,
+  "totalTimeSaved": 7200.5,
+  "totalTikTokDownloads": 89
 }
 ```
 
-## Téléchargements sociaux
+totalTimeSaved est en secondes (duree cumulee des videos traitees).
 
-### Télécharger depuis une plateforme sociale
+## Telechargement social
 
-```
-POST /api/tiktok/download
-Content-Type: application/json
-```
+### POST /api/tiktok/download
 
-ou
+### POST /api/social/download
 
-```
-POST /api/social/download
-Content-Type: application/json
-```
+Ces deux endpoints font exactement la meme chose. Le second est un alias.
 
-**Corps**
+Corps :
 ```json
 {
-  "url": "https://www.tiktok.com/@user/video/123456",
+  "url": "https://www.tiktok.com/@user/video/1234567890",
   "convert720": false
 }
 ```
 
-**Paramètres**
-- `url` (string) : URL du contenu à télécharger
-- `convert720` (boolean, optionnel) : convertir les vidéos en 720p
-
-**Réponse**
+Reponse :
 ```json
 {
-  "id": "abc123",
-  "filename": "titre_video.mp4",
-  "title": "Titre de la vidéo",
-  "uploader": "Nom du créateur",
-  "duration": 60,
+  "id": "abc12345",
+  "filename": "Titre_de_la_video.mp4",
+  "title": "Titre de la video",
+  "uploader": "username",
+  "duration": 45,
   "view_count": 150000,
   "like_count": 5000,
   "platform": "TikTok",
@@ -259,10 +234,12 @@ Content-Type: application/json
 }
 ```
 
-**Plateformes supportées**
+media_type peut valoir "video" ou "image" selon le contenu.
+
+Plateformes supportees :
 - TikTok : tiktok.com, vm.tiktok.com, vt.tiktok.com
-- Instagram : instagram.com/reel/, instagram.com/p/, instagram.com/stories/
-- Facebook : facebook.com/watch, facebook.com/reel/, fb.watch/
+- Instagram : instagram.com/reel/, instagram.com/p/, instagram.com/stories/, instagram.com/tv/
+- Facebook : facebook.com/watch, facebook.com/reel/, fb.watch/, facebook.com/video, facebook.com/photo
 - YouTube : youtube.com/shorts/, youtu.be/, youtube.com/watch
 - Twitter/X : twitter.com/, x.com/, t.co/
 - Snapchat : snapchat.com/spotlight/, story.snapchat.com/
@@ -271,17 +248,20 @@ Content-Type: application/json
 - Pinterest : pinterest.com/pin/, pin.it/
 - Vimeo : vimeo.com/
 
+Erreur si URL non reconnue :
+```json
+{
+  "error": "URL not supported. Supported: TikTok, Instagram, Facebook, YouTube, Twitter/X, Snapchat, Threads, LinkedIn, Pinterest, Vimeo"
+}
+```
+
 ## Nettoyage
 
-### Nettoyer les données
+### POST /api/cleanup
 
-```
-POST /api/cleanup
-```
+Supprime toutes les videos, jobs et telechargements. Vide les dossiers uploads/ et outputs/. Conserve les statistiques.
 
-Supprime toutes les vidéos, jobs et téléchargements de la base de données ainsi que les fichiers associés. Les statistiques sont conservées.
-
-**Réponse succès**
+Reponse :
 ```json
 {
   "success": true,
@@ -289,27 +269,17 @@ Supprime toutes les vidéos, jobs et téléchargements de la base de données ai
 }
 ```
 
-**Réponse erreur**
+En cas d'erreur :
 ```json
 {
   "success": false,
-  "error": "Description de l'erreur"
+  "error": "description de l'erreur"
 }
 ```
 
-## Codes d'erreur
+## Codes HTTP
 
-| Code | Signification |
-|------|---------------|
-| 200 | Succès |
-| 400 | Requête invalide (paramètres manquants, validation échouée) |
-| 404 | Ressource non trouvée |
-| 500 | Erreur serveur interne |
-
-## Format des erreurs
-
-```json
-{
-  "error": "Description du problème"
-}
-```
+- 200 : succes
+- 400 : requete invalide (parametres manquants, validation echouee)
+- 404 : ressource introuvable
+- 500 : erreur serveur

@@ -1,201 +1,230 @@
-# Spécifications fonctionnelles
+# Specifications fonctionnelles
 
-## Découpe vidéo
+## Decoupe video
 
-### Description
-Division d'une vidéo source en plusieurs segments consécutifs de durée égale.
+### Entrees
 
-### Paramètres d'entrée
-- Fichier vidéo (formats supportés : MP4, MOV, AVI, MKV, WebM, FLV, WMV, M4V)
-- Durée de segment en secondes (minimum 1 seconde)
-- Option de conversion 720p (booléen)
+- Fichier video (MP4, MOV, AVI, MKV, WebM, FLV, WMV, M4V)
+- Duree de segment en secondes (minimum 1)
+- Option 720p (oui/non)
 
-### Comportement
-1. La durée totale est divisée par la durée de segment demandée
-2. Le dernier segment peut être plus court si la durée totale n'est pas un multiple exact
-3. Chaque segment est traité de manière indépendante
-4. Les segments sont nommés selon le pattern : `split_{job_id}_segment_{index}.{ext}`
+### Fonctionnement
 
-### Précision technique
-- Framerate de référence : 30 fps
-- Calcul des timestamps basé sur les numéros de frame
-- Réencodage systématique pour garantir les limites exactes
-- Keyframes forcées toutes les secondes
-- Paramètres FFmpeg : libx264, CRF 23, preset medium, AAC 192kbps
+Le nombre de segments est calcule par division entiere de la duree totale par la duree demandee. Si le reste est superieur a une frame (1/30e de seconde), un segment supplementaire est cree avec ce reste.
 
-### Sortie
-- Liste de fichiers segments
-- Chaque segment téléchargeable individuellement
+Exemple :
+- Video de 95 secondes, segments de 30 secondes
+- 95 / 30 = 3 segments de 30s + 1 segment de 5s
+- Total : 4 segments
 
-## Fusion vidéo
+Chaque segment est traite independamment avec les parametres FFmpeg suivants :
+- Codec video : libx264
+- Codec audio : AAC 192 kbps
+- Preset : medium
+- CRF : 23
+- Framerate : 30 fps
+- Keyframes : toutes les secondes
 
-### Description
-Assemblage de plusieurs fichiers vidéo en un seul fichier continu.
+Les noms de fichiers suivent le pattern : `split_{job_id}_segment_{numero}.{extension}`
 
-### Paramètres d'entrée
-- Liste ordonnée de fichiers vidéo (minimum 2)
-- Option de conversion 720p (booléen)
+### Precision
 
-### Ordre des vidéos
-Les vidéos sont fusionnées dans l'ordre où elles ont été uploadées. Pour modifier l'ordre, supprimer les vidéos et les uploader à nouveau dans l'ordre souhaité.
-
-### Comportement
-1. Les vidéos sont concaténées dans l'ordre fourni
-2. Tentative de fusion lossless (copie de stream)
-3. Si la fusion lossless échoue (codecs différents), réencodage automatique
-4. Le fichier fusionné est nommé : `merged_{job_id}.mp4`
-
-### Précision technique
-- Mode lossless : `-c copy` avec FFmpeg
-- Mode réencodage : mêmes paramètres que la découpe
-- Utilisation d'un fichier concat.txt pour la liste des sources
-- Génération de PTS pour synchronisation
+Les coupures se font sur des limites exactes de frames. Pas de copie de stream (qui ne garantit pas la precision) mais un reencodage systematique. Le dernier frame du segment N est immediatement suivi par le premier frame du segment N+1.
 
 ### Sortie
-- Fichier unique contenant toutes les vidéos
+
+Liste de fichiers segments, chacun telechargeable individuellement.
+
+## Fusion video
+
+### Entrees
+
+- Liste d'au moins 2 fichiers video
+- Option 720p (oui/non)
+
+### Fonctionnement
+
+Les videos sont concatenees dans l'ordre fourni. L'application tente d'abord une fusion sans reencodage (copie de stream) via un fichier concat.txt. Si les codecs ou parametres different entre les fichiers, la fusion echoue et un reencodage est lance automatiquement.
+
+Le fichier de sortie s'appelle `merged_{job_id}.mp4`.
+
+### Considerations
+
+La fusion fonctionne mieux quand les videos ont :
+- Le meme codec
+- La meme resolution
+- Le meme framerate
+- Les memes parametres audio
+
+Si ce n'est pas le cas, le reencodage harmonise tout mais prend plus de temps.
+
+### Sortie
+
+Un fichier video unique.
 
 ## Extraction de frames
 
-### Description
-Capture de la première et dernière image d'une vidéo sous forme de fichiers JPEG.
+### Entrees
 
-### Paramètres d'entrée
-- Fichier vidéo
+- Fichier video
 
-### Comportement
-1. Extraction de la frame à t=0 (première image)
-2. Extraction de la frame à t=(durée - 0.1s) (dernière image)
-3. Export en JPEG avec qualité maximale
+### Fonctionnement
 
-### Paramètres FFmpeg
-- `-vf "select=eq(n\,0)"` pour la première frame
-- `-ss {duration-0.1}` pour la dernière frame
-- `-q:v 2` pour la qualité JPEG
-- `-vframes 1` pour extraire une seule image
+1. Upload du fichier dans un emplacement temporaire
+2. Validation (extension, taille, presence d'un flux video)
+3. Extraction de la premiere frame via FFmpeg
+4. Extraction de la derniere frame via FFmpeg (seek a duree - 0.1s)
+5. Suppression du fichier video temporaire
+6. Retour des deux images
+
+### Parametres FFmpeg
+
+Premiere frame :
+```
+-vf "select=eq(n\,0)" -vframes 1 -q:v 2
+```
+
+Derniere frame :
+```
+-ss {duree-0.1} -vframes 1 -q:v 2
+```
 
 ### Sortie
-- Deux fichiers JPEG : `frame_{id}_first.jpg` et `frame_{id}_last.jpg`
 
-## Téléchargement de contenus sociaux
+Deux fichiers JPEG : `frame_{id}_first.jpg` et `frame_{id}_last.jpg`
 
-### Description
-Téléchargement d'images et de vidéos depuis les principales plateformes de réseaux sociaux.
+## Telechargement social
 
-### Plateformes supportées
+### Entrees
 
-| Plateforme | Patterns d'URL |
-|------------|----------------|
+- URL du contenu
+- Option 720p (oui/non, videos uniquement)
+
+### Plateformes
+
+| Plateforme | Patterns reconnus |
+|------------|-------------------|
 | TikTok | tiktok.com/, vm.tiktok.com/, vt.tiktok.com/ |
-| Instagram | instagram.com/reel/, instagram.com/p/, instagram.com/stories/, instagram.com/tv/ |
-| Facebook | facebook.com/watch, facebook.com/reel/, fb.watch/, facebook.com/video, facebook.com/photo |
+| Instagram | instagram.com/reel/, instagram.com/p/, instagram.com/stories/, instagram.com/tv/, instagram.com/s/ |
+| Facebook | facebook.com/watch, facebook.com/reel/, fb.watch/, facebook.com/video, facebook.com/photo, facebook.com/share, facebook.com/story, facebook.com/groups/, fb.gg/ |
 | YouTube | youtube.com/shorts/, youtu.be/, youtube.com/watch |
 | Twitter/X | twitter.com/, x.com/, t.co/ |
-| Snapchat | snapchat.com/spotlight/, story.snapchat.com/ |
+| Snapchat | snapchat.com/spotlight/, snapchat.com/add/, story.snapchat.com/ |
 | Threads | threads.net/ |
-| LinkedIn | linkedin.com/posts/, linkedin.com/video/ |
-| Pinterest | pinterest.com/pin/, pin.it/, pinterest.fr/pin/ |
+| LinkedIn | linkedin.com/posts/, linkedin.com/feed/, linkedin.com/video/ |
+| Pinterest | pinterest.com/pin/, pin.it/, variantes locales (.fr, .co.uk, .de, .es) |
 | Vimeo | vimeo.com/ |
 
-### Paramètres d'entrée
-- URL du contenu
-- Option de conversion 720p (booléen, vidéos uniquement)
+### Fonctionnement
 
-### Comportement
-1. Détection automatique de la plateforme via l'URL
-2. Configuration yt-dlp spécifique à chaque plateforme
-3. Téléchargement du contenu
-4. Extraction des métadonnées (titre, auteur, durée, vues, likes)
-5. Renommage avec titre sanitisé
-6. Conversion 720p optionnelle (vidéos uniquement)
-
-### Options yt-dlp par plateforme
-- Instagram : User-Agent mobile, extraction directe
-- Facebook : User-Agent desktop Chrome
-- Pinterest : User-Agent desktop Chrome
-- Autres : configuration par défaut
+1. Detection de la plateforme via les patterns d'URL
+2. Configuration yt-dlp specifique (User-Agent, options d'extraction)
+3. Telechargement dans outputs/ avec un nom temporaire
+4. Extraction des metadonnees (titre, auteur, duree, vues, likes)
+5. Nettoyage du titre (suppression des caracteres speciaux)
+6. Renommage du fichier avec le titre nettoye
+7. Si option 720p : conversion via FFmpeg
+8. Enregistrement en base de donnees
 
 ### Sortie
-- Fichier média (vidéo ou image)
-- Métadonnées affichées dans l'interface
+
+Fichier media (video ou image) renomme avec le titre du contenu.
 
 ## Conversion 720p
 
-### Description
-Redimensionnement des vidéos pour que la plus petite dimension soit de 720 pixels.
+### Logique
 
-### Logique de redimensionnement
-- Vidéo portrait (hauteur > largeur) : largeur = 720px
-- Vidéo paysage (largeur > hauteur) : hauteur = 720px
-- Dimensions paires pour compatibilité codec
+La plus petite dimension passe a 720 pixels. L'autre dimension suit proportionnellement.
+
+- Video portrait (1080x1920) : devient 720x1280
+- Video paysage (1920x1080) : devient 1280x720
+- Video carree (1080x1080) : devient 720x720
+
+Les dimensions sont arrondies au multiple de 2 pour la compatibilite avec le codec H.264.
 
 ### Filtre FFmpeg
+
 ```
 scale='if(lt(iw,ih),720,trunc(720*iw/ih/2)*2)':'if(lt(iw,ih),trunc(720*ih/iw/2)*2,720)'
 ```
 
 ### Applications
-- Découpe vidéo
-- Fusion vidéo
-- Téléchargements sociaux (vidéos uniquement)
+
+- Decoupe avec option 720p
+- Fusion avec option 720p
+- Telechargement social avec option 720p (videos uniquement)
 
 ## Statistiques
 
-### Métriques suivies
-- Nombre de vidéos découpées
-- Nombre de segments créés
-- Nombre de vidéos fusionnées
-- Durée totale traitée (en secondes)
-- Nombre de téléchargements sociaux
+### Metriques suivies
 
-### Achievements
-Le système attribue des badges selon l'utilisation :
-- Premier découpage
-- Première fusion
-- 10 segments créés
-- 5 vidéos traitées
-- 10 minutes de vidéo traitées
+- total_videos_split : nombre de videos decoupees
+- total_segments_created : nombre total de segments produits
+- total_videos_merged : nombre de fusions effectuees
+- total_time_saved : duree cumulee des videos traitees (secondes)
+- total_tiktok_downloads : nombre de telechargements sociaux
 
-## Nettoyage automatique
+### Persistance
 
-### Déclencheurs
-- Rafraîchissement de la page (appel API /api/cleanup)
-- Après téléchargement (fichiers temporaires sociaux et frames)
+Les statistiques survivent au nettoyage automatique. Elles sont conservees tant que la base de donnees existe.
 
-### Données supprimées
-- Table videos (base de données)
-- Table jobs (base de données)
-- Table tiktok_downloads (base de données)
+## Nettoyage
+
+### Declencheurs
+
+1. Au chargement de la page : le JavaScript appelle POST /api/cleanup
+2. Apres telechargement : les fichiers temporaires (social, frames) sont supprimes
+
+### Donnees supprimees
+
+- Table videos
+- Table jobs
+- Table tiktok_downloads
 - Fichiers dans uploads/
 - Fichiers dans outputs/
 
-### Données conservées
-- Table stats (compteurs globaux)
+### Donnees conservees
+
+- Table stats
 
 ## Validation des fichiers
 
-### Contrôles effectués
-1. Extension dans la liste autorisée
-2. Taille inférieure à 500 Mo
-3. Présence d'un flux vidéo (FFprobe)
+### Extensions autorisees
 
-### Extensions autorisées
 MP4, MOV, AVI, MKV, WebM, FLV, WMV, M4V
 
-### Sanitisation des noms
-Caractères supprimés : `< > : " / \ | ? * # % & { } $ ! ' \` @ ^ + = [ ]`
+### Taille maximale
+
+500 Mo (524 288 000 octets)
+
+### Verification du contenu
+
+FFprobe analyse le fichier et verifie la presence d'au moins un flux de type video.
+
+### Nettoyage des noms
+
+Caracteres supprimes : `< > : " / \ | ? * # % & { } $ ! ' ` @ ^ + = [ ]`
+Les espaces deviennent des underscores. Les caracteres speciaux sont retires. Le nom est tronque a 80 caracteres.
 
 ## Traitement asynchrone
 
-### Jobs
-Les opérations de découpe et fusion créent un job en base de données avec les états :
-- `pending` : créé, en attente
-- `processing` : en cours de traitement
-- `completed` : terminé avec succès
-- `error` : échec
+### Principe
 
-### Polling
-Le frontend interroge le statut des jobs toutes les 2 secondes via GET /api/jobs.
+Les operations de decoupe et fusion prennent du temps. Pour ne pas bloquer le serveur, elles tournent dans des threads separes.
 
-### Timeout
-- Découpe : 600 secondes par segment
-- Fusion : 1200 secondes total
+### Etats d'un job
+
+1. pending : cree, en attente
+2. processing : en cours d'execution
+3. completed : termine avec succes
+4. error : echec
+
+### Suivi
+
+Le frontend interroge GET /api/jobs toutes les 2 secondes tant qu'un job est en pending ou processing.
+
+### Timeouts
+
+- Validation FFprobe : 30 secondes
+- Decoupe par segment : 600 secondes
+- Fusion totale : 1200 secondes

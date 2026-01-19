@@ -1,163 +1,156 @@
-# Guide utilisateur
+# Guide d'utilisation
 
-## Présentation
+## Acces
 
-ClipFlow est un outil de traitement vidéo accessible depuis n'importe quel navigateur. L'interface est conçue pour les appareils mobiles mais fonctionne également sur ordinateur.
+Ouvrez l'application dans votre navigateur. Elle fonctionne sur mobile et sur ordinateur. L'interface est en francais.
 
 ## Navigation
 
-L'application comporte 5 sections accessibles depuis la barre de navigation en bas de l'écran :
+Cinq sections accessibles :
 
-1. **Accueil** : présentation des fonctionnalités et instructions
-2. **Découper** : division d'une vidéo en segments
-3. **Fusionner** : assemblage de plusieurs vidéos
-4. **Download** : téléchargement depuis les réseaux sociaux
-5. **Frames** : extraction des première et dernière images
+1. **Accueil** : presentation et liens rapides
+2. **Decouper** : diviser une video en segments
+3. **Fusionner** : combiner plusieurs videos
+4. **Download** : recuperer des medias depuis les reseaux sociaux
+5. **Frames** : extraire des images fixes
 
-Les statistiques d'utilisation restent accessibles via l'API mais ne sont plus affichées dans la navigation principale.
+Sur l'accueil, vous trouverez aussi un bouton Statistiques (accessible via le bloc violet) et un bouton Theme pour basculer entre mode sombre et mode clair.
 
-## Découper une vidéo
+## Decouper une video
 
-Cette fonction permet de diviser une longue vidéo en plusieurs segments de durée égale.
+Objectif : transformer une longue video en plusieurs clips courts.
 
-### Étapes
+Procedure :
 
-1. Cliquer sur l'onglet **Découper** ou le bloc correspondant sur l'accueil
-2. Cliquer sur la zone d'upload ou glisser-déposer un fichier vidéo
-3. Attendre l'analyse du fichier (durée, résolution, codec)
-4. Définir la durée souhaitée pour chaque segment (en secondes)
-5. Activer l'option **Convertir en 720p** si désiré
-6. Cliquer sur **Découper la vidéo**
-7. Patienter pendant le traitement
-8. Télécharger les segments individuellement ou tous à la fois
+1. Cliquez sur l'onglet Decouper ou le bloc orange sur l'accueil
+2. Glissez votre video dans la zone ou cliquez pour parcourir vos fichiers
+3. La video s'uploade avec une barre de progression
+4. Une fois uploadee, vous voyez la duree et le nom du fichier
+5. Indiquez la duree souhaitee pour chaque segment (en secondes)
+6. Optionnel : activez "Convertir en 720p" pour reduire la taille
+7. Cliquez sur "Decouper la Video"
+8. Patientez pendant le traitement (indicateur de chargement)
+9. Les segments apparaissent avec des boutons de telechargement
 
-### Précision des coupures
+Exemple concret : vous avez une video de 5 minutes (300 secondes). Vous indiquez 60 secondes. Vous obtenez 5 segments d'une minute chacun.
 
-Les coupures sont effectuées avec une précision à l'image près (1/30e de seconde). Cela garantit que si vous fusionnez les segments, le résultat sera identique à l'original sans saut ni duplication de frame.
+Si la duree totale n'est pas divisible exactement, le dernier segment sera plus court. Exemple : video de 150 secondes, segments de 60 secondes = 2 segments de 60s + 1 segment de 30s.
 
-### Option 720p
+### Qualite de decoupe
 
-Lorsque cette option est activée :
-- Les vidéos portrait sont redimensionnées à 720 pixels de largeur
-- Les vidéos paysage sont redimensionnées à 720 pixels de hauteur
-- Le ratio d'aspect original est préservé
+Les segments sont decoupes avec precision a l'image pres. Si vous les fusionnez ensuite, vous retrouvez exactement la video originale sans saut ni frame manquante.
 
-## Fusionner des vidéos
+## Fusionner des videos
 
-Cette fonction permet d'assembler plusieurs vidéos en un seul fichier.
+Objectif : assembler plusieurs clips en un seul fichier.
 
-### Étapes
+Procedure :
 
-1. Cliquer sur l'onglet **Fusionner**
-2. Uploader les vidéos à assembler (une par une)
-3. Supprimer ou ré-uploader pour modifier l'ordre
-4. Activer l'option **Convertir en 720p** si désiré
-5. Cliquer sur **Fusionner les vidéos**
-6. Patienter pendant le traitement
-7. Télécharger le fichier fusionné
+1. Cliquez sur Fusionner ou le bloc vert sur l'accueil
+2. Ajoutez vos videos une par une (cliquez ou glissez)
+3. Chaque video uploadee apparait dans une liste numerotee
+4. L'ordre d'upload determine l'ordre dans la video finale
+5. Pour retirer une video de la liste, cliquez sur la croix rouge
+6. Optionnel : activez "Convertir en 720p"
+7. Cliquez sur "Fusionner les Videos" (disponible a partir de 2 fichiers)
+8. Patientez
+9. Telechargez le fichier fusionne
 
-### Compatibilité des formats
+Pour modifier l'ordre : supprimez les videos de la liste et uploadez-les dans le bon ordre.
 
-La fusion fonctionne mieux lorsque les vidéos ont le même codec, la même résolution et le même framerate. Si les formats diffèrent, l'application réencode automatiquement pour garantir un résultat cohérent.
+## Telecharger depuis les reseaux sociaux
 
-## Télécharger depuis les réseaux sociaux
+Objectif : sauvegarder une video ou une image publiee sur un reseau social.
 
-Cette fonction permet de sauvegarder des images et vidéos depuis 10 plateformes populaires.
+Procedure :
 
-### Plateformes supportées
+1. Copiez l'URL du contenu depuis l'application sociale (bouton Partager > Copier le lien)
+2. Cliquez sur Download ou le bloc violet
+3. Collez l'URL dans le champ de saisie
+4. Optionnel : activez "Convertir en 720p" (pour les videos)
+5. Cliquez sur "Telecharger"
+6. L'application detecte la plateforme et recupere le media
+7. Une carte apparait avec le titre, l'auteur, les vues
+8. Cliquez sur le bouton de telechargement pour sauvegarder sur votre appareil
 
-| Plateforme | Types de contenus |
-|------------|-------------------|
-| TikTok | Vidéos, Live |
+### Plateformes supportees
+
+| Plateforme | Types de liens |
+|------------|----------------|
+| TikTok | Videos, liens courts vm.tiktok.com |
 | Instagram | Posts, Reels, Stories, IGTV |
-| Facebook | Vidéos, Reels, Stories, Photos de groupe |
-| YouTube | Vidéos, Shorts |
-| Twitter/X | Vidéos, GIFs |
+| Facebook | Videos, Reels, Stories, Photos de groupe |
+| YouTube | Videos, Shorts |
+| Twitter/X | Videos, GIFs |
 | Snapchat | Spotlight |
-| Threads | Posts vidéo |
-| LinkedIn | Vidéos, Posts |
-| Pinterest | Épingles vidéo et image |
-| Vimeo | Vidéos |
+| Threads | Posts video |
+| LinkedIn | Videos, Publications |
+| Pinterest | Epingles video et image |
+| Vimeo | Videos |
 
-### Étapes
+### Indicateurs
 
-1. Copier l'URL du contenu à télécharger depuis l'application sociale
-2. Cliquer sur l'onglet **Download**
-3. Coller l'URL dans le champ prévu
-4. Activer l'option **Convertir en 720p** si désiré (vidéos uniquement)
-5. Cliquer sur **Télécharger**
-6. Attendre la fin du téléchargement
-7. Cliquer sur le bouton de téléchargement pour sauvegarder le fichier
-
-### Informations affichées
-
-Pour chaque téléchargement, l'application affiche :
-- Titre du contenu
-- Nom du créateur
-- Durée (pour les vidéos)
-- Nombre de vues
-- Nombre de likes
-- Plateforme d'origine
-- Badge 720p si la conversion a été appliquée
-- Badge Image/Vidéo selon le type
+Chaque carte de telechargement affiche :
+- Un badge de couleur avec le nom de la plateforme
+- Un badge "Image" si c'est une image
+- Un badge "720p" si la conversion a ete appliquee
+- Le nom du createur
+- La duree (pour les videos)
 
 ## Extraire des frames
 
-Cette fonction permet de capturer la première et la dernière image d'une vidéo.
+Objectif : obtenir la premiere et la derniere image d'une video.
 
-### Utilisations courantes
+Procedure :
 
-- Créer des miniatures pour des publications
-- Vérifier le contenu d'une vidéo sans la lire
-- Extraire des images fixes de qualité
+1. Cliquez sur Frames ou le bloc bleu
+2. Uploadez une video
+3. Cliquez sur "Extraire les Frames"
+4. Deux images JPEG apparaissent
+5. Telechargez celle(s) qui vous interesse(nt)
 
-### Étapes
+Usage typique : creer une miniature, verifier le contenu d'une video sans la lire, recuperer un instant precis au debut ou a la fin.
 
-1. Cliquer sur l'onglet **Frames**
-2. Uploader une vidéo
-3. Cliquer sur **Extraire les Frames**
-4. Télécharger les images (première et dernière)
+## Statistiques
 
-### Format de sortie
+Le bloc Statistiques sur l'accueil affiche vos totaux d'utilisation :
+- Videos decoupees
+- Segments crees
+- Videos fusionnees
+- Duree totale traitee
+- Telechargements sociaux
 
-Les images sont exportées en JPEG avec une qualité élevée (paramètre -q:v 2 de FFmpeg).
+Ces compteurs persistent entre les sessions. Ils ne sont pas supprimes au rafraichissement.
 
 ## Mode sombre
 
-L'application propose un mode sombre et un mode clair. Cliquer sur l'icône lune/soleil en haut à droite pour basculer. Le choix est mémorisé pour les visites suivantes.
+Cliquez sur le bouton Theme (soleil/lune) sur l'accueil pour basculer. Votre preference est memorisee.
 
 ## Nettoyage automatique
 
-Pour libérer l'espace de stockage, tous les fichiers sont automatiquement supprimés lorsque vous rafraîchissez la page. Pensez à télécharger vos fichiers avant de quitter.
+Au rafraichissement de la page, tous vos fichiers sont supprimes. C'est voulu : l'application ne stocke rien sur le long terme. Pensez a telecharger vos fichiers avant de quitter ou de rafraichir.
 
 ## Limites
 
-| Limite | Valeur |
-|--------|--------|
+| Contrainte | Valeur |
+|------------|--------|
 | Taille maximale par fichier | 500 Mo |
-| Formats acceptés | MP4, MOV, AVI, MKV, WebM, FLV, WMV, M4V |
-| Durée minimale d'un segment | 1 seconde |
+| Duree minimale d'un segment | 1 seconde |
+| Formats video acceptes | MP4, MOV, AVI, MKV, WebM, FLV, WMV, M4V |
 
-## Résolution des problèmes
+## En cas de probleme
 
-### Le fichier n'est pas accepté
+**Le fichier n'est pas accepte**
+- Verifiez le format (extension)
+- Verifiez la taille (500 Mo max)
+- Essayez de convertir le fichier dans un autre format
 
-- Vérifier que le format est dans la liste des formats supportés
-- Vérifier que la taille ne dépasse pas 500 Mo
-- Essayer de convertir le fichier dans un autre format
+**Le telechargement social echoue**
+- Verifiez que le lien est complet (pas tronque)
+- Certains contenus prives ou proteges ne sont pas accessibles
+- Essayez avec un autre lien vers le meme contenu
 
-### Le téléchargement social échoue
-
-- Vérifier que l'URL est complète et valide
-- Certains contenus privés ne sont pas accessibles
-- Essayer avec une URL différente du même contenu
-
-### Le traitement est lent
-
-- Les fichiers volumineux prennent plus de temps
-- La conversion 720p ajoute du temps de traitement
-- La fusion de nombreuses vidéos peut être longue
-
-## Raccourcis clavier
-
-L'application ne dispose pas de raccourcis clavier spécifiques. La navigation se fait uniquement via les boutons et la barre de navigation.
+**Le traitement est long**
+- Normal pour les gros fichiers
+- La conversion 720p ajoute du temps
+- La fusion de nombreuses videos prend plus de temps

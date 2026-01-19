@@ -60,62 +60,85 @@ class FFmpegHelper:
     
     @staticmethod
     def split_video_lossless(input_path: str, output_pattern: str, 
-                             segment_duration: int, total_duration: float) -> List[str]:
+                             segment_duration: int, total_duration: float, fps: int = 30) -> List[str]:
+        """Split video with frame-accurate cuts at 30fps for seamless merging.
+        Always re-encodes to ensure exact frame boundaries - stream copy cannot guarantee frame accuracy."""
         outputs = []
+        frame_duration = 1.0 / fps
+        
         num_segments = int(total_duration // segment_duration)
         last_segment_duration = total_duration - (num_segments * segment_duration)
         
-        if last_segment_duration > 0.1:
+        if last_segment_duration > frame_duration:
             num_segments += 1
         
         for i in range(num_segments):
-            start_time = i * segment_duration
+            start_frame = i * segment_duration * fps
+            start_time = start_frame / fps
+            
             output_file = output_pattern.format(index=i + 1)
             
-            if i == num_segments - 1 and last_segment_duration > 0.1:
+            if i == num_segments - 1 and last_segment_duration > frame_duration:
                 duration = last_segment_duration
             else:
                 duration = segment_duration
             
+            num_frames = int(duration * fps)
+            actual_duration = num_frames / fps
+            
             cmd = [
                 "ffmpeg",
                 "-y",
-                "-ss", str(start_time),
+                "-ss", f"{start_time:.6f}",
                 "-i", input_path,
-                "-t", str(duration),
-                "-c", "copy",
+                "-t", f"{actual_duration:.6f}",
+                "-c:v", FFMPEG_VIDEO_CODEC,
+                "-preset", FFMPEG_PRESET,
+                "-crf", FFMPEG_CRF,
+                "-r", str(fps),
+                "-g", str(fps),
+                "-force_key_frames", f"expr:eq(mod(n,{fps}),0)",
+                "-c:a", FFMPEG_AUDIO_CODEC,
+                "-b:a", "192k",
+                "-movflags", "+faststart",
+                "-fflags", "+genpts",
                 "-avoid_negative_ts", "make_zero",
-                "-map", "0",
-                "-reset_timestamps", "1",
                 output_file
             ]
             
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
             
             if result.returncode == 0 and os.path.exists(output_file):
                 outputs.append(os.path.basename(output_file))
             else:
-                outputs.extend(FFmpegHelper._split_with_reencode(
-                    input_path, output_file, start_time, duration
-                ))
+                print(f"FFmpeg frame-accurate split error: {result.stderr}")
         
         return outputs
     
     @staticmethod
     def _split_with_reencode(input_path: str, output_file: str, 
                              start_time: float, duration: float) -> List[str]:
+        return FFmpegHelper._split_with_reencode_precise(input_path, output_file, start_time, duration, 30)
+    
+    @staticmethod
+    def _split_with_reencode_precise(input_path: str, output_file: str, 
+                                     start_time: float, duration: float, fps: int = 30) -> List[str]:
+        """Re-encode with frame-accurate timing at specified FPS"""
         cmd = [
             "ffmpeg",
             "-y",
-            "-ss", str(start_time),
+            "-ss", f"{start_time:.6f}",
             "-i", input_path,
-            "-t", str(duration),
+            "-t", f"{duration:.6f}",
             "-c:v", FFMPEG_VIDEO_CODEC,
             "-preset", FFMPEG_PRESET,
             "-crf", FFMPEG_CRF,
+            "-r", str(fps),
+            "-g", str(fps),
             "-c:a", FFMPEG_AUDIO_CODEC,
             "-b:a", "192k",
             "-movflags", "+faststart",
+            "-fflags", "+genpts",
             output_file
         ]
         
@@ -128,6 +151,7 @@ class FFmpegHelper:
     @staticmethod
     def merge_videos_lossless(input_files: List[str], output_path: str, 
                               temp_dir: str) -> bool:
+        """Merge videos losslessly - works best when all segments have same codec/fps"""
         concat_file = os.path.join(temp_dir, "concat_list.txt")
         
         with open(concat_file, "w") as f:
@@ -143,6 +167,7 @@ class FFmpegHelper:
             "-i", concat_file,
             "-c", "copy",
             "-movflags", "+faststart",
+            "-fflags", "+genpts",
             output_path
         ]
         
@@ -155,7 +180,8 @@ class FFmpegHelper:
     
     @staticmethod
     def _merge_with_reencode(input_files: List[str], output_path: str, 
-                             temp_dir: str) -> bool:
+                             temp_dir: str, fps: int = 30) -> bool:
+        """Re-encode and merge at consistent FPS for seamless playback"""
         concat_file = os.path.join(temp_dir, "concat_list.txt")
         
         with open(concat_file, "w") as f:
@@ -172,9 +198,12 @@ class FFmpegHelper:
             "-c:v", FFMPEG_VIDEO_CODEC,
             "-preset", FFMPEG_PRESET,
             "-crf", FFMPEG_CRF,
+            "-r", str(fps),
+            "-g", str(fps),
             "-c:a", FFMPEG_AUDIO_CODEC,
             "-b:a", "192k",
             "-movflags", "+faststart",
+            "-fflags", "+genpts",
             output_path
         ]
         
@@ -184,36 +213,49 @@ class FFmpegHelper:
     
     @staticmethod
     def split_video_720p(input_path: str, output_pattern: str, 
-                         segment_duration: int, total_duration: float) -> List[str]:
+                         segment_duration: int, total_duration: float, fps: int = 30) -> List[str]:
+        """Split video with 720p conversion and frame-accurate cuts at 30fps for seamless merging."""
         outputs = []
+        frame_duration = 1.0 / fps
+        
         num_segments = int(total_duration // segment_duration)
         last_segment_duration = total_duration - (num_segments * segment_duration)
         
-        if last_segment_duration > 0.1:
+        if last_segment_duration > frame_duration:
             num_segments += 1
         
         for i in range(num_segments):
-            start_time = i * segment_duration
+            start_frame = i * segment_duration * fps
+            start_time = start_frame / fps
+            
             output_file = output_pattern.format(index=i + 1)
             
-            if i == num_segments - 1 and last_segment_duration > 0.1:
+            if i == num_segments - 1 and last_segment_duration > frame_duration:
                 duration = last_segment_duration
             else:
                 duration = segment_duration
             
+            num_frames = int(duration * fps)
+            actual_duration = num_frames / fps
+            
             cmd = [
                 "ffmpeg",
                 "-y",
-                "-ss", str(start_time),
+                "-ss", f"{start_time:.6f}",
                 "-i", input_path,
-                "-t", str(duration),
+                "-t", f"{actual_duration:.6f}",
                 "-vf", "scale='if(lt(iw,ih),720,trunc(720*iw/ih/2)*2)':'if(lt(iw,ih),trunc(720*ih/iw/2)*2,720)'",
                 "-c:v", FFMPEG_VIDEO_CODEC,
                 "-preset", FFMPEG_PRESET,
                 "-crf", FFMPEG_CRF,
+                "-r", str(fps),
+                "-g", str(fps),
+                "-force_key_frames", f"expr:eq(mod(n,{fps}),0)",
                 "-c:a", FFMPEG_AUDIO_CODEC,
                 "-b:a", "192k",
                 "-movflags", "+faststart",
+                "-fflags", "+genpts",
+                "-avoid_negative_ts", "make_zero",
                 output_file
             ]
             
@@ -228,7 +270,8 @@ class FFmpegHelper:
     
     @staticmethod
     def merge_videos_720p(input_files: List[str], output_path: str, 
-                          temp_dir: str) -> bool:
+                          temp_dir: str, fps: int = 30) -> bool:
+        """Merge videos with 720p conversion at consistent FPS for seamless playback"""
         concat_file = os.path.join(temp_dir, "concat_list.txt")
         
         with open(concat_file, "w") as f:
@@ -246,9 +289,12 @@ class FFmpegHelper:
             "-c:v", FFMPEG_VIDEO_CODEC,
             "-preset", FFMPEG_PRESET,
             "-crf", FFMPEG_CRF,
+            "-r", str(fps),
+            "-g", str(fps),
             "-c:a", FFMPEG_AUDIO_CODEC,
             "-b:a", "192k",
             "-movflags", "+faststart",
+            "-fflags", "+genpts",
             output_path
         ]
         

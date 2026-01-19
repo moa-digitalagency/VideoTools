@@ -1,8 +1,8 @@
-# VideoSplit - Video Split & Merge Web Application
+# ClipFlow - Video Split & Merge Web Application
 
 ## Overview
 
-VideoSplit is a mobile-first web application for splitting and merging video files. Users can:
+ClipFlow is a mobile-first web application for splitting and merging video files. Users can:
 - **Split videos** directly on the Split page (no separate upload page) with optional 720p conversion
 - **Merge videos** directly on the Merge page with optional 720p conversion
 - **Download images & videos** from TikTok, Instagram, Facebook, YouTube, Twitter/X, Snapchat, Threads, LinkedIn, and Pinterest by URL

@@ -532,6 +532,11 @@ function renderTikTokDownloads() {
             iconTextClass = 'text-blue-700';
             badgeBgClass = 'bg-blue-700/20';
             badgeTextClass = 'text-blue-700';
+        } else if (v.platform === 'Pinterest') {
+            iconBgClass = 'bg-red-600/20';
+            iconTextClass = 'text-red-600';
+            badgeBgClass = 'bg-red-600/20';
+            badgeTextClass = 'text-red-600';
         }
         
         const convertedBadge = v.converted_720p ? '<span class="bg-purple-500/20 text-purple-500 px-2 py-0.5 rounded-full text-xs">720p</span>' : '';

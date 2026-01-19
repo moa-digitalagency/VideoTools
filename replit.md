@@ -5,7 +5,7 @@
 VideoSplit is a mobile-first web application for splitting and merging video files. Users can:
 - **Split videos** directly on the Split page (no separate upload page) with optional 720p conversion
 - **Merge videos** directly on the Merge page with optional 720p conversion
-- **Download videos** from TikTok, Instagram, Facebook, and YouTube by URL
+- **Download images & videos** from TikTok, Instagram, Facebook, YouTube, Twitter/X, Snapchat, Threads, LinkedIn, and Pinterest by URL
 - View statistics and achievements
 
 The app features a night blue color theme with light/dark mode toggle, Lottie animations, explanatory text on all pages, and automatic database and file cleanup on page refresh.

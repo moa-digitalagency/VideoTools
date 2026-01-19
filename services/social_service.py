@@ -22,12 +22,12 @@ class SocialMediaService:
             'name': 'TikTok'
         },
         'instagram': {
-            'patterns': ['instagram.com/reel/', 'instagram.com/p/', 'instagram.com/tv/', 'instagram.com/stories/'],
+            'patterns': ['instagram.com/reel/', 'instagram.com/reels/', 'instagram.com/p/', 'instagram.com/tv/', 'instagram.com/stories/', 'instagram.com/s/'],
             'prefix': 'instagram',
             'name': 'Instagram'
         },
         'facebook': {
-            'patterns': ['facebook.com/watch', 'facebook.com/reel/', 'fb.watch/', 'facebook.com/video', 'facebook.com/photo', 'facebook.com/share'],
+            'patterns': ['facebook.com/watch', 'facebook.com/reel/', 'facebook.com/reels/', 'fb.watch/', 'facebook.com/video', 'facebook.com/photo', 'facebook.com/share', 'facebook.com/story', 'fb.gg/', 'facebook.com/groups/', 'facebook.com/permalink'],
             'prefix': 'facebook',
             'name': 'Facebook'
         },
@@ -55,8 +55,85 @@ class SocialMediaService:
             'patterns': ['linkedin.com/posts/', 'linkedin.com/feed/', 'linkedin.com/video/'],
             'prefix': 'linkedin',
             'name': 'LinkedIn'
+        },
+        'pinterest': {
+            'patterns': ['pinterest.com/pin/', 'pinterest.fr/pin/', 'pin.it/', 'pinterest.co.uk/pin/', 'pinterest.de/pin/', 'pinterest.es/pin/'],
+            'prefix': 'pinterest',
+            'name': 'Pinterest'
         }
     }
+    
+    @staticmethod
+    def get_platform_options(platform: str) -> dict:
+        base_opts = {
+            'quiet': True,
+            'no_warnings': True,
+            'extract_flat': False,
+            'ignoreerrors': True,
+            'no_check_certificates': True,
+            'prefer_insecure': True,
+        }
+        
+        if platform == 'instagram':
+            return {
+                **base_opts,
+                'format': 'best[ext=mp4]/best',
+                'http_headers': {
+                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+                },
+                'extractor_args': {
+                    'instagram': {
+                        'direct_download': ['True'],
+                    }
+                },
+            }
+        elif platform == 'facebook':
+            return {
+                **base_opts,
+                'format': 'best[ext=mp4]/best',
+                'http_headers': {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                },
+            }
+        elif platform == 'pinterest':
+            return {
+                **base_opts,
+                'format': 'best[ext=mp4]/best',
+                'http_headers': {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                },
+            }
+        elif platform == 'tiktok':
+            return {
+                **base_opts,
+                'format': 'best[ext=mp4]/best',
+                'http_headers': {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                },
+            }
+        elif platform == 'twitter':
+            return {
+                **base_opts,
+                'format': 'best[ext=mp4]/best',
+            }
+        elif platform == 'threads':
+            return {
+                **base_opts,
+                'format': 'best[ext=mp4]/best',
+                'http_headers': {
+                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+                },
+            }
+        elif platform == 'linkedin':
+            return {
+                **base_opts,
+                'format': 'best[ext=mp4]/best',
+            }
+        else:
+            return {
+                **base_opts,
+                'format': 'best[ext=mp4]/best',
+            }
     
     @staticmethod
     def get_db():
@@ -109,7 +186,7 @@ class SocialMediaService:
         
         platform = SocialMediaService.detect_platform(url)
         if not platform:
-            return None, "URL not supported. Supported: TikTok, Instagram, Facebook, YouTube, Twitter/X, Snapchat"
+            return None, "URL not supported. Supported: TikTok, Instagram, Facebook, YouTube, Twitter/X, Snapchat, Threads, LinkedIn, Pinterest"
         
         try:
             media_id = str(uuid.uuid4())[:8]
@@ -118,13 +195,10 @@ class SocialMediaService:
             
             temp_template = os.path.join(OUTPUT_DIR, f"{platform_prefix}_{media_id}_temp.%(ext)s")
             
+            platform_opts = SocialMediaService.get_platform_options(platform)
             ydl_opts = {
+                **platform_opts,
                 'outtmpl': temp_template,
-                'format': 'best[ext=mp4]/best',
-                'quiet': True,
-                'no_warnings': True,
-                'extract_flat': False,
-                'cookiefile': None,
             }
             
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:

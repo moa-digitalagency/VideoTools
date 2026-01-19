@@ -60,6 +60,11 @@ class SocialMediaService:
             'patterns': ['pinterest.com/pin/', 'pinterest.fr/pin/', 'pin.it/', 'pinterest.co.uk/pin/', 'pinterest.de/pin/', 'pinterest.es/pin/'],
             'prefix': 'pinterest',
             'name': 'Pinterest'
+        },
+        'vimeo': {
+            'patterns': ['vimeo.com/'],
+            'prefix': 'vimeo',
+            'name': 'Vimeo'
         }
     }
     
@@ -129,6 +134,11 @@ class SocialMediaService:
                 **base_opts,
                 'format': 'best[ext=mp4]/best',
             }
+        elif platform == 'vimeo':
+            return {
+                **base_opts,
+                'format': 'best[ext=mp4]/best',
+            }
         else:
             return {
                 **base_opts,
@@ -186,7 +196,7 @@ class SocialMediaService:
         
         platform = SocialMediaService.detect_platform(url)
         if not platform:
-            return None, "URL not supported. Supported: TikTok, Instagram, Facebook, YouTube, Twitter/X, Snapchat, Threads, LinkedIn, Pinterest"
+            return None, "URL not supported. Supported: TikTok, Instagram, Facebook, YouTube, Twitter/X, Snapchat, Threads, LinkedIn, Pinterest, Vimeo"
         
         try:
             media_id = str(uuid.uuid4())[:8]

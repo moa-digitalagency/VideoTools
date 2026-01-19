@@ -102,7 +102,7 @@
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-2 gap-3">
                     <button class="service-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-4 border border-night-200 dark:border-night-700 hover:border-warning dark:hover:border-warning hover:shadow-lg hover:shadow-warning/10 transition-all duration-300 text-center" data-goto="split" data-testid="service-split">
                         <div class="w-12 h-12 mx-auto bg-gradient-to-br from-warning to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-warning/20 mb-3">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,6 +128,15 @@
                             </svg>
                         </div>
                         <h3 class="font-semibold text-night-900 dark:text-white text-sm">Télécharger</h3>
+                    </button>
+                    
+                    <button class="service-block bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-4 border border-night-200 dark:border-night-700 hover:border-cyan-500 dark:hover:border-cyan-500 hover:shadow-lg hover:shadow-cyan-500/10 transition-all duration-300 text-center" data-goto="frames" data-testid="service-frames">
+                        <div class="w-12 h-12 mx-auto bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20 mb-3">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-night-900 dark:text-white text-sm">Extraire Frames</h3>
                     </button>
                 </div>
                 
@@ -334,7 +343,7 @@
                         </div>
                         <div>
                             <h2 class="font-semibold text-night-900 dark:text-white">Social Media Image & Video Downloader</h2>
-                            <p class="text-xs text-night-500 dark:text-night-400">TikTok, Instagram, Facebook, YouTube, Twitter/X, Snapchat, Threads, LinkedIn, Pinterest</p>
+                            <p class="text-xs text-night-500 dark:text-night-400">TikTok, Instagram, Facebook, YouTube, Twitter/X, Snapchat, Threads, LinkedIn, Pinterest, Vimeo</p>
                         </div>
                     </div>
                     
@@ -397,6 +406,12 @@
                             </svg>
                             <span class="text-[10px] mt-1 text-night-600 dark:text-night-400">Pinterest</span>
                         </div>
+                        <div class="flex flex-col items-center p-2 bg-night-100 dark:bg-night-700/30 rounded-lg">
+                            <svg class="w-5 h-5 text-cyan-500" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 11.4C4.603 8.816 3.834 7.522 3.01 7.522c-.179 0-.806.378-1.881 1.132L0 7.197c1.185-1.044 2.351-2.084 3.501-3.128C5.08 2.701 6.266 1.984 7.055 1.91c1.867-.18 3.016 1.1 3.447 3.838.465 2.953.789 4.789.971 5.507.539 2.45 1.131 3.674 1.776 3.674.502 0 1.256-.796 2.265-2.385 1.004-1.589 1.54-2.797 1.612-3.628.144-1.371-.395-2.061-1.614-2.061-.574 0-1.167.121-1.777.391 1.186-3.868 3.434-5.757 6.762-5.637 2.473.06 3.628 1.664 3.493 4.797l-.013.01z"/>
+                            </svg>
+                            <span class="text-[10px] mt-1 text-night-600 dark:text-night-400">Vimeo</span>
+                        </div>
                     </div>
 
                     <div class="space-y-4">
@@ -442,6 +457,97 @@
                         Médias Téléchargés
                     </h3>
                     <div id="tiktok-downloads-container"></div>
+                </div>
+            </div>
+
+            <div id="page-frames" class="page hidden">
+                <div class="card bg-white/80 dark:bg-night-800/50 backdrop-blur-lg rounded-2xl p-6 mb-4 border border-night-200 dark:border-night-700">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="font-semibold text-night-900 dark:text-white">Extracteur de Frames</h2>
+                            <p class="text-xs text-night-500 dark:text-night-400">Premiere et derniere image d'une video</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-night-100/50 dark:bg-night-700/20 rounded-lg p-3 mb-4 text-xs text-night-600 dark:text-night-400">
+                        <p>Uploadez une video pour extraire automatiquement la premiere et la derniere image (frame). Ideal pour creer des miniatures ou verifier le contenu.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div id="frames-upload-zone" class="border-2 border-dashed border-night-300 dark:border-night-600 rounded-xl p-6 text-center cursor-pointer hover:border-cyan-500 dark:hover:border-cyan-500 transition-colors">
+                            <input type="file" id="frames-video-input" accept="video/*" class="hidden" data-testid="input-frames-video">
+                            <div class="flex flex-col items-center gap-2">
+                                <div class="w-12 h-12 bg-cyan-500/10 rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                    </svg>
+                                </div>
+                                <p class="text-sm text-night-600 dark:text-night-400">Cliquez ou glissez une video</p>
+                                <p class="text-xs text-night-400">MP4, AVI, MOV, MKV</p>
+                            </div>
+                        </div>
+
+                        <div id="frames-video-preview" class="hidden">
+                            <div class="flex items-center justify-between bg-night-100 dark:bg-night-700/30 rounded-xl p-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p id="frames-video-name" class="text-sm font-medium text-night-900 dark:text-white truncate max-w-[150px]"></p>
+                                        <p id="frames-video-size" class="text-xs text-night-500 dark:text-night-400"></p>
+                                    </div>
+                                </div>
+                                <button id="btn-remove-frames-video" class="p-2 text-danger hover:bg-danger/10 rounded-lg transition-colors" data-testid="button-remove-frames-video">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button id="btn-extract-frames" class="btn-primary w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold py-4 rounded-xl hover:shadow-lg hover:shadow-cyan-500/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none" disabled data-testid="button-extract-frames">
+                            <span class="flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                Extraire les Frames
+                            </span>
+                        </button>
+
+                        <div id="frames-loading" class="hidden text-center py-6">
+                            <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_p8bfn5to.json" background="transparent" speed="1" style="width: 80px; height: 80px; margin: 0 auto;" loop autoplay></lottie-player>
+                            <p class="text-night-600 dark:text-night-400 mt-2">Extraction en cours...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="frames-result" class="hidden space-y-3">
+                    <h3 class="font-medium text-night-700 dark:text-night-300 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Frames Extraites
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white/80 dark:bg-night-800/50 rounded-xl p-3 border border-night-200 dark:border-night-700">
+                            <p class="text-xs text-night-500 dark:text-night-400 mb-2 text-center">Premiere Frame</p>
+                            <img id="first-frame-img" src="" alt="First Frame" class="w-full rounded-lg mb-2">
+                            <a id="first-frame-download" href="#" download class="block text-center bg-cyan-500 text-white text-sm py-2 rounded-lg hover:bg-cyan-600 transition-colors" data-testid="button-download-first-frame">Telecharger</a>
+                        </div>
+                        <div class="bg-white/80 dark:bg-night-800/50 rounded-xl p-3 border border-night-200 dark:border-night-700">
+                            <p class="text-xs text-night-500 dark:text-night-400 mb-2 text-center">Derniere Frame</p>
+                            <img id="last-frame-img" src="" alt="Last Frame" class="w-full rounded-lg mb-2">
+                            <a id="last-frame-download" href="#" download class="block text-center bg-cyan-500 text-white text-sm py-2 rounded-lg hover:bg-cyan-600 transition-colors" data-testid="button-download-last-frame">Telecharger</a>
+                        </div>
+                    </div>
                 </div>
             </div>
 

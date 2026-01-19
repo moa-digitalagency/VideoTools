@@ -350,3 +350,83 @@ class VideoService:
                 os.remove(file_path)
             except Exception:
                 pass
+    
+    @staticmethod
+    def extract_frames(file, original_name: str):
+        """Extract first and last frames from a video"""
+        import subprocess
+        
+        valid, error = FileValidator.validate_extension(original_name)
+        if not valid:
+            return None, error
+        
+        filename, file_path = FileHandler.save_upload(file, original_name)
+        
+        file_size = FileHandler.get_file_size(file_path)
+        valid, error = FileValidator.validate_size(file_size)
+        if not valid:
+            FileHandler.delete_file(file_path)
+            return None, error
+        
+        valid, error = FileValidator.validate_video_file(file_path)
+        if not valid:
+            FileHandler.delete_file(file_path)
+            return None, error
+        
+        duration = FFmpegHelper.get_duration(file_path)
+        if duration <= 0:
+            FileHandler.delete_file(file_path)
+            return None, "Could not determine video duration"
+        
+        base_name = os.path.splitext(original_name)[0]
+        frame_id = str(uuid.uuid4())[:8]
+        
+        first_frame_name = f"frame_{frame_id}_first.jpg"
+        last_frame_name = f"frame_{frame_id}_last.jpg"
+        first_frame_path = os.path.join(OUTPUT_DIR, first_frame_name)
+        last_frame_path = os.path.join(OUTPUT_DIR, last_frame_name)
+        
+        try:
+            cmd_first = [
+                "ffmpeg", "-y",
+                "-i", file_path,
+                "-vf", "select=eq(n\\,0)",
+                "-vframes", "1",
+                "-q:v", "2",
+                first_frame_path
+            ]
+            result_first = subprocess.run(cmd_first, capture_output=True, timeout=60)
+            
+            if result_first.returncode != 0 or not os.path.exists(first_frame_path):
+                FileHandler.delete_file(file_path)
+                return None, "Failed to extract first frame"
+            
+            last_time = max(0, duration - 0.1)
+            cmd_last = [
+                "ffmpeg", "-y",
+                "-ss", str(last_time),
+                "-i", file_path,
+                "-vframes", "1",
+                "-q:v", "2",
+                last_frame_path
+            ]
+            result_last = subprocess.run(cmd_last, capture_output=True, timeout=60)
+            
+            if result_last.returncode != 0 or not os.path.exists(last_frame_path):
+                FileHandler.delete_file(file_path)
+                FileHandler.delete_file(first_frame_path)
+                return None, "Failed to extract last frame"
+            
+            FileHandler.delete_file(file_path)
+            
+            return {
+                "firstFrame": first_frame_name,
+                "lastFrame": last_frame_name,
+                "duration": duration
+            }, None
+            
+        except Exception as e:
+            FileHandler.delete_file(file_path)
+            FileHandler.delete_file(first_frame_path)
+            FileHandler.delete_file(last_frame_path)
+            return None, f"Frame extraction error: {str(e)}"

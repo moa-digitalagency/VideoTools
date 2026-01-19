@@ -96,6 +96,24 @@ def merge_videos():
     return jsonify({"jobId": job['id'], **job})
 
 
+@videos_bp.route('/api/videos/extract-frames', methods=['POST'])
+def extract_frames():
+    if 'video' not in request.files:
+        return jsonify({"error": "No video file provided"}), 400
+    
+    file = request.files['video']
+    if file.filename == '':
+        return jsonify({"error": "No file selected"}), 400
+    
+    filename = file.filename or "video.mp4"
+    result, error = VideoService.extract_frames(file, filename)
+    
+    if error or not result:
+        return jsonify({"error": error or "Frame extraction failed"}), 400
+    
+    return jsonify(result)
+
+
 @videos_bp.route('/api/download/<path:filename>', methods=['GET'])
 def download_output(filename):
     from urllib.parse import unquote
@@ -107,7 +125,7 @@ def download_output(filename):
     
     @after_this_request
     def cleanup(response):
-        if 'tiktok_' in decoded_filename or 'instagram_' in decoded_filename or 'facebook_' in decoded_filename or 'youtube_' in decoded_filename:
+        if any(prefix in decoded_filename for prefix in ['tiktok_', 'instagram_', 'facebook_', 'youtube_', 'twitter_', 'snapchat_', 'threads_', 'linkedin_', 'pinterest_', 'vimeo_', 'frame_']):
             VideoService.cleanup_file_after_download(file_path)
         return response
     

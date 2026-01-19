@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initSplit();
     initMerge();
     initTikTok();
+    initFrames();
     
     await cleanupOnLoad();
     
@@ -537,6 +538,11 @@ function renderTikTokDownloads() {
             iconTextClass = 'text-red-600';
             badgeBgClass = 'bg-red-600/20';
             badgeTextClass = 'text-red-600';
+        } else if (v.platform === 'Vimeo') {
+            iconBgClass = 'bg-cyan-500/20';
+            iconTextClass = 'text-cyan-500';
+            badgeBgClass = 'bg-cyan-500/20';
+            badgeTextClass = 'text-cyan-500';
         }
         
         const convertedBadge = v.converted_720p ? '<span class="bg-purple-500/20 text-purple-500 px-2 py-0.5 rounded-full text-xs">720p</span>' : '';
@@ -710,4 +716,117 @@ function formatFileSize(bytes) {
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+let framesVideo = null;
+
+function initFrames() {
+    const uploadZone = document.getElementById('frames-upload-zone');
+    const videoInput = document.getElementById('frames-video-input');
+    const btnExtract = document.getElementById('btn-extract-frames');
+    const btnRemove = document.getElementById('btn-remove-frames-video');
+    
+    if (!uploadZone || !videoInput) return;
+    
+    uploadZone.addEventListener('click', () => videoInput.click());
+    
+    uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('border-cyan-500', 'dark:border-cyan-500');
+    });
+    
+    uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('border-cyan-500', 'dark:border-cyan-500');
+    });
+    
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('border-cyan-500', 'dark:border-cyan-500');
+        const files = e.dataTransfer.files;
+        if (files.length > 0 && files[0].type.startsWith('video/')) {
+            handleFramesVideoSelect(files[0]);
+        }
+    });
+    
+    videoInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleFramesVideoSelect(e.target.files[0]);
+        }
+    });
+    
+    if (btnRemove) {
+        btnRemove.addEventListener('click', () => {
+            framesVideo = null;
+            document.getElementById('frames-video-preview').classList.add('hidden');
+            document.getElementById('frames-upload-zone').classList.remove('hidden');
+            btnExtract.disabled = true;
+            document.getElementById('frames-result').classList.add('hidden');
+        });
+    }
+    
+    if (btnExtract) {
+        btnExtract.addEventListener('click', extractFrames);
+    }
+}
+
+function handleFramesVideoSelect(file) {
+    framesVideo = file;
+    
+    document.getElementById('frames-upload-zone').classList.add('hidden');
+    document.getElementById('frames-video-preview').classList.remove('hidden');
+    document.getElementById('frames-video-name').textContent = file.name;
+    document.getElementById('frames-video-size').textContent = formatFileSize(file.size);
+    document.getElementById('btn-extract-frames').disabled = false;
+    document.getElementById('frames-result').classList.add('hidden');
+}
+
+async function extractFrames() {
+    if (!framesVideo) return;
+    
+    const btnExtract = document.getElementById('btn-extract-frames');
+    const loading = document.getElementById('frames-loading');
+    const result = document.getElementById('frames-result');
+    
+    btnExtract.disabled = true;
+    loading.classList.remove('hidden');
+    result.classList.add('hidden');
+    
+    try {
+        const formData = new FormData();
+        formData.append('video', framesVideo);
+        
+        const response = await fetch(`${API_BASE}/videos/extract-frames`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Extraction failed');
+        }
+        
+        const firstFrameImg = document.getElementById('first-frame-img');
+        const lastFrameImg = document.getElementById('last-frame-img');
+        const firstFrameDownload = document.getElementById('first-frame-download');
+        const lastFrameDownload = document.getElementById('last-frame-download');
+        
+        const firstFrameUrl = `/api/download/${encodeURIComponent(data.firstFrame)}`;
+        const lastFrameUrl = `/api/download/${encodeURIComponent(data.lastFrame)}`;
+        
+        firstFrameImg.src = firstFrameUrl;
+        lastFrameImg.src = lastFrameUrl;
+        firstFrameDownload.href = firstFrameUrl;
+        lastFrameDownload.href = lastFrameUrl;
+        firstFrameDownload.download = data.firstFrame;
+        lastFrameDownload.download = data.lastFrame;
+        
+        result.classList.remove('hidden');
+        
+    } catch (err) {
+        alert('Erreur: ' + err.message);
+    } finally {
+        loading.classList.add('hidden');
+        btnExtract.disabled = false;
+    }
 }

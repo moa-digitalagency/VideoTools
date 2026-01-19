@@ -5,8 +5,19 @@
 ClipFlow is a mobile-first web application for splitting and merging video files. Users can:
 - **Split videos** directly on the Split page (no separate upload page) with optional 720p conversion
 - **Merge videos** directly on the Merge page with optional 720p conversion
-- **Download images & videos** from TikTok, Instagram, Facebook, YouTube, Twitter/X, Snapchat, Threads, LinkedIn, and Pinterest by URL
+- **Download images & videos** from TikTok, Instagram, Facebook, YouTube, Twitter/X, Snapchat, Threads, LinkedIn, Pinterest, and Vimeo by URL
+- **Extract frames** to capture the first and last image from any video
 - View statistics and achievements
+
+## Documentation
+
+Complete documentation is available in the `docs/` folder:
+- `README.md` - Overview and getting started
+- `ARCHITECTURE.md` - Technical architecture and component details
+- `API.md` - Complete API reference
+- `USER_GUIDE.md` - End-user guide with step-by-step instructions
+- `FEATURES.md` - Detailed functional specifications
+- `CHANGELOG.md` - Version history and changes
 
 The app features a night blue color theme with light/dark mode toggle, Lottie animations, explanatory text on all pages, and automatic database and file cleanup on page refresh.
 

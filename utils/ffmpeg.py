@@ -1,12 +1,26 @@
 import subprocess
 import json
 import os
+import concurrent.futures
 from typing import Optional, Dict, List, Tuple
 from config import FFMPEG_VIDEO_CODEC, FFMPEG_AUDIO_CODEC, FFMPEG_PRESET, FFMPEG_CRF
 
 
 class FFmpegHelper:
     
+    @staticmethod
+    def _run_split_cmd(cmd: List[str], output_file: str) -> Optional[str]:
+        """Helper to run a split command in a thread"""
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+            if result.returncode == 0 and os.path.exists(output_file):
+                return os.path.basename(output_file)
+            else:
+                print(f"FFmpeg split error: {result.stderr}")
+        except Exception as e:
+            print(f"FFmpeg execution error: {e}")
+        return None
+
     @staticmethod
     def get_video_info(file_path: str) -> Dict:
         try:
@@ -63,7 +77,6 @@ class FFmpegHelper:
                              segment_duration: int, total_duration: float, fps: int = 30) -> List[str]:
         """Split video with frame-accurate cuts at 30fps for seamless merging.
         Always re-encodes to ensure exact frame boundaries - stream copy cannot guarantee frame accuracy."""
-        outputs = []
         frame_duration = 1.0 / fps
         
         num_segments = int(total_duration // segment_duration)
@@ -72,6 +85,9 @@ class FFmpegHelper:
         if last_segment_duration > frame_duration:
             num_segments += 1
         
+        cmds = []
+        output_files = []
+
         for i in range(num_segments):
             start_frame = i * segment_duration * fps
             start_time = start_frame / fps
@@ -103,17 +119,31 @@ class FFmpegHelper:
                 "-movflags", "+faststart",
                 "-fflags", "+genpts",
                 "-avoid_negative_ts", "make_zero",
+                "-threads", "1",
                 output_file
             ]
             
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+            cmds.append(cmd)
+            output_files.append(output_file)
             
-            if result.returncode == 0 and os.path.exists(output_file):
-                outputs.append(os.path.basename(output_file))
-            else:
-                print(f"FFmpeg frame-accurate split error: {result.stderr}")
+        # Execute in parallel
+        results = [None] * len(cmds)
+        max_workers = min(os.cpu_count() or 1, 4)
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_index = {
+                executor.submit(FFmpegHelper._run_split_cmd, cmds[i], output_files[i]): i
+                for i in range(len(cmds))
+            }
+
+            for future in concurrent.futures.as_completed(future_to_index):
+                index = future_to_index[future]
+                try:
+                    results[index] = future.result()
+                except Exception as exc:
+                    print(f'Segment {index} generated an exception: {exc}')
         
-        return outputs
+        return [r for r in results if r is not None]
     
     @staticmethod
     def _split_with_reencode(input_path: str, output_file: str, 
@@ -215,7 +245,6 @@ class FFmpegHelper:
     def split_video_720p(input_path: str, output_pattern: str, 
                          segment_duration: int, total_duration: float, fps: int = 30) -> List[str]:
         """Split video with 720p conversion and frame-accurate cuts at 30fps for seamless merging."""
-        outputs = []
         frame_duration = 1.0 / fps
         
         num_segments = int(total_duration // segment_duration)
@@ -224,6 +253,9 @@ class FFmpegHelper:
         if last_segment_duration > frame_duration:
             num_segments += 1
         
+        cmds = []
+        output_files = []
+
         for i in range(num_segments):
             start_frame = i * segment_duration * fps
             start_time = start_frame / fps
@@ -256,17 +288,31 @@ class FFmpegHelper:
                 "-movflags", "+faststart",
                 "-fflags", "+genpts",
                 "-avoid_negative_ts", "make_zero",
+                "-threads", "1",
                 output_file
             ]
             
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+            cmds.append(cmd)
+            output_files.append(output_file)
             
-            if result.returncode == 0 and os.path.exists(output_file):
-                outputs.append(os.path.basename(output_file))
-            else:
-                print(f"FFmpeg 720p split error: {result.stderr}")
+        # Execute in parallel
+        results = [None] * len(cmds)
+        max_workers = min(os.cpu_count() or 1, 4)
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_index = {
+                executor.submit(FFmpegHelper._run_split_cmd, cmds[i], output_files[i]): i
+                for i in range(len(cmds))
+            }
+
+            for future in concurrent.futures.as_completed(future_to_index):
+                index = future_to_index[future]
+                try:
+                    results[index] = future.result()
+                except Exception as exc:
+                    print(f'Segment {index} generated an exception: {exc}')
         
-        return outputs
+        return [r for r in results if r is not None]
     
     @staticmethod
     def merge_videos_720p(input_files: List[str], output_path: str, 

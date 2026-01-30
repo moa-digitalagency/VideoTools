@@ -184,7 +184,7 @@
                     </div>
 
                     <div class="space-y-4">
-                        <div id="split-upload-zone" class="upload-zone border-2 border-dashed border-warning/40 rounded-xl p-6 text-center cursor-pointer hover:border-warning hover:bg-warning/5 dark:hover:bg-warning/10 transition-all duration-300" data-testid="split-upload-zone">
+                        <div id="split-upload-zone" role="button" tabindex="0" aria-label="Uploader une vidéo" onkeydown="if(event.key==='Enter'||event.key===' '){this.click();event.preventDefault();}" class="upload-zone border-2 border-dashed border-warning/40 rounded-xl p-6 text-center cursor-pointer hover:border-warning hover:bg-warning/5 dark:hover:bg-warning/10 transition-all duration-300" data-testid="split-upload-zone">
                             <input type="file" id="split-video-input" accept="video/*" class="hidden" data-testid="input-split-video">
                             <div class="space-y-2">
                                 <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_uwR49r.json" background="transparent" speed="1" style="width: 60px; height: 60px; margin: 0 auto;" loop autoplay></lottie-player>
@@ -216,8 +216,8 @@
                                         <span>Durée: <span id="split-duration" class="font-mono">00:00</span></span>
                                     </div>
                                 </div>
-                                <button id="btn-remove-split-video" class="text-red-400 hover:text-red-500 p-1" data-testid="button-remove-split-video">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <button id="btn-remove-split-video" aria-label="Supprimer la vidéo" class="text-red-400 hover:text-red-500 p-1" data-testid="button-remove-split-video">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                     </svg>
                                 </button>
@@ -225,7 +225,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm text-night-600 dark:text-night-300 mb-2 font-medium">Durée de chaque segment (secondes)</label>
+                            <label for="segment-duration" class="block text-sm text-night-600 dark:text-night-300 mb-2 font-medium">Durée de chaque segment (secondes)</label>
                             <div class="flex items-center gap-3">
                                 <input type="number" id="segment-duration" value="30" min="1" max="3600" class="flex-1 bg-white dark:bg-night-700/50 border border-night-300 dark:border-night-600 rounded-xl px-4 py-3 focus:outline-none focus:border-warning focus:ring-2 focus:ring-warning/20 font-mono text-lg transition-all text-night-900 dark:text-white" data-testid="input-segment-duration">
                                 <span class="text-night-500 dark:text-night-400">sec</span>
@@ -240,7 +240,7 @@
                                 <span class="text-sm text-night-600 dark:text-night-300">Convertir en 720p</span>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="split-convert-720" class="sr-only peer" data-testid="toggle-split-720">
+                                <input type="checkbox" id="split-convert-720" aria-label="Convertir en 720p" class="sr-only peer" data-testid="toggle-split-720">
                                 <div class="w-11 h-6 bg-night-300 dark:bg-night-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-warning/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-night-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-warning"></div>
                             </label>
                         </div>
@@ -284,7 +284,7 @@
                     </div>
 
                     <div class="space-y-4">
-                        <div id="merge-upload-zone" class="upload-zone border-2 border-dashed border-success/40 rounded-xl p-6 text-center cursor-pointer hover:border-success hover:bg-success/5 dark:hover:bg-success/10 transition-all duration-300" data-testid="merge-upload-zone">
+                        <div id="merge-upload-zone" role="button" tabindex="0" aria-label="Uploader des vidéos" onkeydown="if(event.key==='Enter'||event.key===' '){this.click();event.preventDefault();}" class="upload-zone border-2 border-dashed border-success/40 rounded-xl p-6 text-center cursor-pointer hover:border-success hover:bg-success/5 dark:hover:bg-success/10 transition-all duration-300" data-testid="merge-upload-zone">
                             <input type="file" id="merge-video-input" accept="video/*" multiple class="hidden" data-testid="input-merge-files">
                             <div class="space-y-2">
                                 <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_uwR49r.json" background="transparent" speed="1" style="width: 60px; height: 60px; margin: 0 auto;" loop autoplay></lottie-player>
@@ -314,7 +314,7 @@
                                 <span class="text-sm text-night-600 dark:text-night-300">Convertir en 720p</span>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="merge-convert-720" class="sr-only peer" data-testid="toggle-merge-720">
+                                <input type="checkbox" id="merge-convert-720" aria-label="Convertir en 720p" class="sr-only peer" data-testid="toggle-merge-720">
                                 <div class="w-11 h-6 bg-night-300 dark:bg-night-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-success/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-night-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-success"></div>
                             </label>
                         </div>
@@ -428,7 +428,7 @@
                                 <span class="text-sm text-night-600 dark:text-night-300">Convertir en 720p (vidéos uniquement)</span>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="social-convert-720" class="sr-only peer" data-testid="toggle-social-720">
+                                <input type="checkbox" id="social-convert-720" aria-label="Convertir en 720p" class="sr-only peer" data-testid="toggle-social-720">
                                 <div class="w-11 h-6 bg-night-300 dark:bg-night-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-purple-500/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-night-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500"></div>
                             </label>
                         </div>
@@ -479,7 +479,7 @@
                     </div>
 
                     <div class="space-y-4">
-                        <div id="frames-upload-zone" class="border-2 border-dashed border-night-300 dark:border-night-600 rounded-xl p-6 text-center cursor-pointer hover:border-cyan-500 dark:hover:border-cyan-500 transition-colors">
+                        <div id="frames-upload-zone" role="button" tabindex="0" aria-label="Uploader une vidéo" onkeydown="if(event.key==='Enter'||event.key===' '){this.click();event.preventDefault();}" class="border-2 border-dashed border-night-300 dark:border-night-600 rounded-xl p-6 text-center cursor-pointer hover:border-cyan-500 dark:hover:border-cyan-500 transition-colors">
                             <input type="file" id="frames-video-input" accept="video/*" class="hidden" data-testid="input-frames-video">
                             <div class="flex flex-col items-center gap-2">
                                 <div class="w-12 h-12 bg-cyan-500/10 rounded-full flex items-center justify-center">
@@ -505,8 +505,8 @@
                                         <p id="frames-video-size" class="text-xs text-night-500 dark:text-night-400"></p>
                                     </div>
                                 </div>
-                                <button id="btn-remove-frames-video" class="p-2 text-danger hover:bg-danger/10 rounded-lg transition-colors" data-testid="button-remove-frames-video">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <button id="btn-remove-frames-video" aria-label="Supprimer la vidéo" class="p-2 text-danger hover:bg-danger/10 rounded-lg transition-colors" data-testid="button-remove-frames-video">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                     </svg>
                                 </button>

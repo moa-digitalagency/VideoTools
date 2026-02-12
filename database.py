@@ -50,7 +50,7 @@ class TikTokDownloadModel(Base):
     id = Column(String(36), primary_key=True)
     url = Column(String(500), nullable=False)
     filename = Column(String(255), nullable=False)
-    title = Column(String(500), nullable=True)
+    title = Column(Text, nullable=True)
     uploader = Column(String(255), nullable=True)
     duration = Column(Float, nullable=True)
     view_count = Column(Integer, nullable=True)

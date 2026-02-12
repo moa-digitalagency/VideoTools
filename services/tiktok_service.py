@@ -55,10 +55,15 @@ class TikTokService:
                 if not os.path.exists(filename):
                     return None, "Download failed - file not found"
                 
+                # Truncate title to 500 characters to fit in database
+                title = info.get('title', 'TikTok Video')
+                if title and len(title) > 500:
+                    title = title[:497] + "..."
+
                 result = {
                     'id': video_id,
                     'filename': os.path.basename(filename),
-                    'title': info.get('title', 'TikTok Video'),
+                    'title': title,
                     'uploader': info.get('uploader', 'Unknown'),
                     'duration': info.get('duration', 0),
                     'view_count': info.get('view_count', 0),

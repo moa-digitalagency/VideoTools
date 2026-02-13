@@ -22,6 +22,12 @@ def download_tiktok():
     return jsonify(result)
 
 
+@tiktok_bp.route('/api/social/history', methods=['GET'])
+def get_history():
+    history = SocialVideoService.get_all_downloads()
+    return jsonify(history)
+
+
 @tiktok_bp.route('/api/social/download', methods=['POST'])
 def download_social():
     data = request.get_json()

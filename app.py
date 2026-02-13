@@ -1,6 +1,9 @@
 import os
 from flask import Flask, send_from_directory
 from flask_cors import CORS
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from config import TEMPLATES_DIR
 from routes import videos_bp, jobs_bp, stats_bp, tiktok_bp, cleanup_bp

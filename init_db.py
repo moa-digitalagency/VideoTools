@@ -4,6 +4,9 @@ Script to initialize the PostgreSQL database tables.
 Run this once before starting the application.
 """
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from database import init_db
 
 if __name__ == "__main__":

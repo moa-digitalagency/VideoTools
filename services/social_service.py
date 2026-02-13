@@ -299,6 +299,8 @@ class SocialMediaService:
                         view_count=result['view_count'],
                         like_count=result['like_count'],
                         path=final_path,
+                        platform=result['platform'],
+                        media_type=result['media_type'],
                         is_downloaded=False
                     )
                     db.add(download)
@@ -328,7 +330,10 @@ class SocialMediaService:
                 'uploader': d.uploader,
                 'duration': d.duration,
                 'view_count': d.view_count,
-                'like_count': d.like_count
+                'like_count': d.like_count,
+                'platform': d.platform,
+                'media_type': d.media_type,
+                'converted_720p': False  # Database doesn't store this flag yet, maybe add it later if needed
             } for d in downloads]
         finally:
             db.close()

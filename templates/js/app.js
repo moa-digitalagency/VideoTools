@@ -17,7 +17,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     loadStats();
     pollJobs();
+    loadHistory();
 });
+
+async function loadHistory() {
+    try {
+        const res = await fetch(`${API_BASE}/social/history`);
+        if (res.ok) {
+            tiktokDownloads = await res.json();
+            renderTikTokDownloads();
+        }
+    } catch (err) {
+        console.error('Error loading history:', err);
+    }
+}
 
 async function cleanupOnLoad() {
     try {

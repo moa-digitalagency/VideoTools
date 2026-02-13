@@ -99,12 +99,13 @@ Les tâches lourdes (Split/Merge) sont traitées de manière **asynchrone** via 
 
 Pour aller plus loin, consultez la documentation détaillée dans le dossier `docs/` :
 
-*   📖 **[Liste Exhaustive des Fonctionnalités](docs/features_full_list.md)** : La "Bible" du projet.
-*   ⚙️ **[Architecture Technique](docs/architecture.md)** : Diagrammes et flux de données.
-*   💾 **[Base de Données](docs/database.md)** : Schéma relationnel et migrations.
-*   💻 **[Stack Technique](docs/technical_stack.md)** : Détail des technologies utilisées.
-*   🚀 **[Guide de Déploiement](docs/deployment.md)** : Installation locale et production.
-*   👤 **[Guide Utilisateur](docs/user_guide.md)** : Manuel d'utilisation pas à pas.
+*   📖 **[Liste Exhaustive des Fonctionnalités](docs/clipflow_features_full_list.md)** : La "Bible" du projet.
+*   ⚙️ **[Architecture Technique](docs/clipflow_architecture.md)** : Diagrammes et flux de données.
+*   💾 **[Base de Données](docs/clipflow_database.md)** : Schéma relationnel et migrations.
+*   💻 **[Stack Technique](docs/clipflow_technical_stack.md)** : Détail des technologies utilisées.
+*   🚀 **[Guide de Déploiement](docs/clipflow_deployment.md)** : Installation locale et production.
+*   👤 **[Guide Utilisateur](docs/clipflow_user_guide.md)** : Manuel d'utilisation pas à pas.
+*   🎨 **[Design Guidelines](docs/clipflow_design_guidelines.md)** : Principes de design et typographie.
 
 ---
 
